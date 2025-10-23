@@ -12,7 +12,7 @@ On souhaite développer un site permettant de simuler un jeu de gestion équestr
     Fill along the project
 
   Lien démo:
-    Testwatt
+    [Inspiration](https://www.equideow.com/)
 
   Bugs Connus:
     ...
