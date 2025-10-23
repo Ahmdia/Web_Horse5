@@ -1,2 +1,18 @@
 # Web_Horse5
+
+
 On souhaite développer un site permettant de simuler un jeu de gestion équestre.  On explicitera les fonctionnalités au fur et à mesure due l'avancement du projet.
+
+ Membres du projet:
+   Morgan Malle
+   Eya Rekik
+   Ahmadou Cherif Dia
+
+  Technologies utilisées:
+    Fill along the project
+
+  Lien démo:
+    Testwatt
+
+  Bugs Connus:
+    ...
