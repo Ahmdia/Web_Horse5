@@ -1,0 +1,186 @@
+body 
+{
+  background-image: url("/Web_Horse5/Project_Code/Img/Decor/une-porte-qui-s-etend-dans-un-monde-fantastique.jpg");
+  background-size: cover;
+  background-position: center;
+  
+
+  /*  background-image: url("une-porte-qui-s-etend-dans-un-monde-fantastique.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height:494px;
+  width:1000px;*/
+  
+}
+#cheval {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 350px;  
+  height: 350px; 
+    animation: slidein 3s ease-out forwards;
+    
+  }
+
+
+  @keyframes slidein {
+    from {
+      transform: translate(-50%, -100%) scale(0.5); /* demarrage en haut */
+      opacity: 0; /*demarrage en flou */
+    }
+    to {
+      transform: translate(-50%, -50%) scale(1); /* arrive au centre */
+      opacity: 1;
+    }
+  }
+
+#races
+{
+  position: absolute;
+  top: 20%;
+  left: 30%;
+  font-size: 0.9rem; 
+  color: white;
+  
+}
+
+#sellefrancais 
+{
+  position: relative;
+  right: 20%;
+  color: white;
+  animation: slidein 1s ease-out forwards;
+
+}
+#paint_horse
+{
+  position: relative;
+  right: 40%;
+  color: white;
+  animation: slidein 2s ease-out forwards;
+
+}
+#pottock
+{
+  position: relative;
+  right: 60%;
+  color: white;
+  animation: slidein 3s ease-out forwards;
+
+}
+#pur_sang
+{
+  position: relative;
+  right: 80%;
+  color: white;
+  animation: slidein 4s ease-out forwards;
+
+}
+
+#shetland
+{
+  position: relative;
+  right: 60%;
+  color: white;
+  animation: slidein 5s ease-out forwards;
+
+}
+#marawi
+{
+  position: relative;
+  right: 40%;
+  color: white;
+  animation: slidein 6s ease-out forwards;
+
+}
+#akhal
+{
+  position: relative;
+  right: 20%;
+  color: white;
+  animation: slidein 7s ease-out forwards;
+
+}
+
+.couleur {
+  position: absolute;
+  top: 50%;     
+  left: 70%;     
+  transform: translate(-50%, -50%);
+  width: 100px;
+  height: 100px;
+
+}
+
+/* images rondes */
+.couleur img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;          
+  border: 1px solid white;
+  object-fit: cover;
+  position: absolute;
+}
+
+#sellefrancais1 {
+  top: 50;        
+  left: 50%;     
+  visibility: hidden;
+}
+
+#sellefrancais2 {
+  top: 80%;     
+  left: 75%;     
+  transform: translateY(-50%);
+  visibility: hidden;
+}
+
+
+#PaintHorse1 {
+  top: 30;       
+  left: 50%;     
+  visibility: hidden;
+}
+
+#PaintHorse2 {
+  top: 50%;      
+  left: 75%;     
+  transform: translateY(-50%);
+  visibility: hidden;
+}
+#PaintHorse3 {
+  top: 80%;      /* milieu vertical du parent */
+  left: 75%;     /* décalage vers la gauche */
+  transform: translateY(-50%);
+  visibility: hidden;
+}
+
+
+#pottock1 {
+  top: 30;       
+  left: 50%;     
+  visibility: hidden;
+}
+
+#pottock2 {
+  top: 50%;      
+  left: 75%;     
+  transform: translateY(-50%);
+  visibility: hidden;
+}
+#pottock3 {
+  top: 80%;      /* milieu vertical du parent */
+  left: 75%;     /* décalage vers la gauche */
+  transform: translateY(-50%);
+  visibility: hidden;
+}
+
+
+
+#stable
+{
+  width: 40px;
+  height: 40px;
+}

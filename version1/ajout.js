@@ -42,7 +42,7 @@ document.addEventListener('click', function(e) {
   if (e.target.classList.contains('img_sellefrancais')) {
     if (e.target.id === 'sellefrancais1') 
     {
-      cheval.src = "sellefrancais/Rn-grand (1).webp";
+      cheval.src = "sellefrancais/Rn-grand.webp";
     }
     if (e.target.id === 'sellefrancais2') 
     {
