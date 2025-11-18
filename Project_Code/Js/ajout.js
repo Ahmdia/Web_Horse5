@@ -42,40 +42,35 @@ document.addEventListener('click', function(e) {
   if (e.target.classList.contains('img_sellefrancais')) {
     if (e.target.id === 'sellefrancais1') 
     {
-      cheval.src = "sellefrancais/Rn-grand (1).webp";
+      cheval.src = "Img/sellefrancais/Rn-grand.webp";
     }
     if (e.target.id === 'sellefrancais2') 
     {
-      cheval.src = "sellefrancais/SF_GS_NV.webp";
+      cheval.src = "Imgsellefrancais/SF_GS_NV.webp";
     }
   }
 
   if (e.target.classList.contains('img_PaintHorse')) {
     if (e.target.id === 'PaintHorse1') 
-    {cheval.src = "PaintHorse/PH_Nouveau_BB_Pie_O_Alezan.webp";}
+    {cheval.src = "Img/PaintHorse/PH_Nouveau_BB_Pie_O_Alezan.webp";}
     if (e.target.id === 'PaintHorse2') 
-      {cheval.src = "PaintHorse/PH_Nouveau_Pie_overo_noir.webp";}
+      {cheval.src = "Img/PaintHorse/PH_Nouveau_Pie_overo_noir.webp";}
     if (e.target.id === 'PaintHorse3') 
-      {cheval.src = "PaintHorse/Pie-tb-alz-grand.webp";}
+      {cheval.src = "Img/PaintHorse/Pie-tb-alz-grand.webp";}
   }
 
   if (e.target.classList.contains('img_pottock')) {
   if (e.target.id === 'pottock1') 
-  {cheval.src = "Pottock/Bai-b-grand.webp";}
+  {cheval.src = "Img/Pottock/Bai-b-grand.webp";}
   if (e.target.id === 'pottock2') 
-    {cheval.src = "Pottock/Pottok.webp";}
+    {cheval.src = "Img/Pottock/Pottok.webp";}
   if (e.target.id === 'pottock3') 
-    {cheval.src = "Pottock/Pottock.webp";}
+    {cheval.src = "Img/Pottock/Pottock.webp";}
 }});
 
 
 
 let stable=document.getElementById('stable'); 
 stable.addEventListener('click', () => 
-  
-  
-        window.location.href = "inside.html" 
-
-                       
-                       
+        window.location.href = "inside.html"                                       
                        );
