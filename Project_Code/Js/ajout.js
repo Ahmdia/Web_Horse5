@@ -46,7 +46,7 @@ document.addEventListener('click', function(e) {
     }
     if (e.target.id === 'sellefrancais2') 
     {
-      cheval.src = "Imgsellefrancais/SF_GS_NV.webp";
+      cheval.src = "Img/sellefrancais/SF_GS_NV.webp";
     }
   }
 
