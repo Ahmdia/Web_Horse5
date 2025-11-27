@@ -6,9 +6,9 @@
   <link rel="icon" type="image/png" href="jumping-horse-silhouette-facing-left-side-view.png">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="formulaire.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
-  <script src="ajout.js" defer></script></script>
-  <script src="secondPage.js" defer></script></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+  <script src="ajout.js" defer></script>
+  <script src="secondPage.js" defer></script>
 
 </head>
 
@@ -56,39 +56,35 @@
   
   <!--creation de partie de l'inscrit-->
   <div id="box_formulaire">
-    <h2>Informations du cavalier</h2>
-      <form id="formulaire_cheval" >
-      <div class="data">
-        <label for="nom">identifiant :</label>
-        <input type="text" id="nom" name="nom" placeholder="Votre nom" required>
-      </div>
+  <h2>Informations du cavalier</h2>
+  <form id="formulaire_cheval" action="/register" method="POST">
+    <div class="data">
+      <label for="nom">Identifiant :</label>
+      <input type="text" id="nom" name="nom" placeholder="Votre nom" required>
+    </div>
 
-      <div class="data">
-        <label for="prenom">nom de cheval :</label>
-        <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required>
-      </div>
+    <div class="data">
+      <label for="prenom">Nom de cheval :</label>
+      <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required>
+    </div>
 
-      <div class="data">
-        <label for="date_naissance">Date de naissance :</label>
-        <input type="date" id="date_naissance" name="date_naissance" required>
-      </div>
+    <div class="data">
+      <label for="date_naissance">Date de naissance :</label>
+      <input type="date" id="date_naissance" name="date_naissance" required>
+    </div>
 
-      <div class="data">
-        <label>Sexe :</label>
-        <div class="radio-group">
-          <label>
-            <input type="radio" name="sexe" value="femme" required>
-            Femme
-          </label>
-          <label>
-            <input type="radio" name="sexe" value="homme" required>
-            Homme
-          </label>
-        </div>
+    <div class="data">
+      <label>Sexe :</label>
+      <div class="radio-group">
+        <label><input type="radio" name="sexe" value="femme" required> Femme</label>
+        <label><input type="radio" name="sexe" value="homme" required> Homme</label>
       </div>
-      <button type="submit">Envoyer</button>
-    </form>
-  </div>
+    </div>
+
+    <button type="submit">Créer un compte</button>
+  </form>
+</div>
+
 
 
 
@@ -129,7 +125,7 @@
       renderer: 'svg',       // SVG pour que ce soit responsive
       loop: false,           // joue une seule fois
       autoplay: true,        // lance automatiquement
-      path: 'baguette_magique.json' // chemin vers ton fichier JSON
+      path: './baguette_magique.json' // chemin vers ton fichier JSON
     });
     // Quand l'animation est terminée, faire apparaître le cheval
       fairy.addEventListener('complete', () => {
