@@ -1,0 +1,60 @@
+/* Conteneur du formulaire */
+#box_formulaire {
+  position: relative;           /* pour rester sous le cheval */
+  margin-top: 20px;             /* espace entre le cheval et le formulaire */
+  width: 320px;                 /* largeur du formulaire */
+  background-color: rgba(255, 255, 255, 0.85); /* fond semi-transparent */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  display: flex;
+  flex-direction: column;       /* empilement vertical */
+  gap: 15px;                    /* espace entre les champs */
+  left: 50%;                    /* centré horizontalement */
+  transform: translateX(-50%);
+}
+
+/* Style du titre */
+#box_formulaire h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+/* Labels et champs */
+#box_formulaire label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+#box_formulaire input,
+#box_formulaire select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Boutons radio */
+.radio-group {
+  display: flex;
+  flex-direction: row; /* alignement horizontal des radios */
+  gap: 15px;
+}
+
+/* Bouton submit */
+#box_formulaire button {
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #4CAF50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+#box_formulaire button:hover {
+  background-color: #45a049;
+}

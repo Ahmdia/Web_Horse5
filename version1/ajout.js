@@ -14,7 +14,7 @@ const races = [
   { id: 'akhal', classImg: 'img_akhal' }
 ];
 
-// 2️⃣ Boucle sur chaque race pour ajouter un event click
+// Boucle sur chaque race pour ajouter un event click
 races.forEach(race => {
   let h2 = document.getElementById(race.id);
 
@@ -70,12 +70,11 @@ document.addEventListener('click', function(e) {
 
 
 
-let stable=document.getElementById('stable'); 
-stable.addEventListener('click', () => 
-  
-  
-        window.location.href = "inside.html" 
+          
 
-                       
-                       
-                       );
+
+
+
+
+
+
