@@ -1,60 +1,40 @@
-/* Conteneur du formulaire */
-#box_formulaire {
-  position: relative;           /* pour rester sous le cheval */
-  margin-top: 20px;             /* espace entre le cheval et le formulaire */
-  width: 320px;                 /* largeur du formulaire */
-  background-color: rgba(255, 255, 255, 0.85); /* fond semi-transparent */
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
-  display: flex;
-  flex-direction: column;       /* empilement vertical */
-  gap: 15px;                    /* espace entre les champs */
-  left: 50%;                    /* centré horizontalement */
-  transform: translateX(-50%);
-}
-
-/* Style du titre */
-#box_formulaire h2 {
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-/* Labels et champs */
-#box_formulaire label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  display: block;
-}
-
-#box_formulaire input,
-#box_formulaire select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+/* Fond noir transparent */
+#modal {
+  display: none;              /* caché au début */
+  position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
-  box-sizing: border-box;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); 
+  backdrop-filter: blur(2px);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
 }
 
-/* Boutons radio */
-.radio-group {
-  display: flex;
-  flex-direction: row; /* alignement horizontal des radios */
-  gap: 15px;
+/* Boîte du formulaire */
+#box_formulaire {
+  background: white;
+  padding: 25px;
+  width: 400px;
+  max-width: 90%;
+  border-radius: 10px;
+  position: relative;
+  animation: fadeIn 0.3s ease;
 }
 
-/* Bouton submit */
-#box_formulaire button {
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: #4CAF50;
-  color: white;
-  font-weight: bold;
+/* Bouton fermer */
+#close_btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 28px;
   cursor: pointer;
-  margin-top: 10px;
 }
 
-#box_formulaire button:hover {
-  background-color: #45a049;
+/* Animation */
+@keyframes fadeIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }

@@ -32,6 +32,8 @@
       </div>      <audio id="son">
         <source src="horse-neigh-261131.mp3" type="audio/mpeg" />
       </audio>
+          <button id="valider-btn">Valider choix de cheval</button>
+
     </div>
 
     <div class="couleur">
@@ -46,43 +48,46 @@
       <img src="Pottock/Pottok.png" id="pottock2" class="img_pottock">
       <img src="Pottock/Pottock.png" id="pottock3" class="img_pottock">
     </div>
-    <audio  id="son_baguette_magique">
-      <source src="charming-twinkle-sound-for-fantasy-and-magic-250240.mp3" type="audio/mpeg" />
-    </audio>
+   
 
 
 
 
-  
-  <!--creation de partie de l'inscrit-->
+
+<!-- MODALE FORMULAIRE -->
+<div id="modal">
   <div id="box_formulaire">
-  <h2>Informations du cavalier</h2>
-  <form id="formulaire_cheval" action="/register" method="POST">
-    <div class="data">
-      <label for="nom">Identifiant :</label>
-      <input type="text" id="nom" name="nom" placeholder="Votre nom" required>
-    </div>
+    <span id="close_btn">&times;</span>
 
-    <div class="data">
-      <label for="prenom">Nom de cheval :</label>
-      <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required>
-    </div>
+    <h2>Informations du cavalier</h2>
 
-    <div class="data">
-      <label for="date_naissance">Date de naissance :</label>
-      <input type="date" id="date_naissance" name="date_naissance" required>
-    </div>
-
-    <div class="data">
-      <label>Sexe :</label>
-      <div class="radio-group">
-        <label><input type="radio" name="sexe" value="femme" required> Femme</label>
-        <label><input type="radio" name="sexe" value="homme" required> Homme</label>
+    <form id="formulaire_cheval" action="/register" method="POST">
+      <div class="data">
+        <label for="nom">Identifiant :</label>
+        <input type="text" id="nom" name="nom" required>
       </div>
-    </div>
 
-    <button type="submit">Créer un compte</button>
-  </form>
+      <div class="data">
+        <label for="prenom">Nom de cheval :</label>
+        <input type="text" id="prenom" name="prenom" required>
+      </div>
+
+      <div class="data">
+        <label for="date_naissance">Date de naissance :</label>
+        <input type="date" id="date_naissance" name="date_naissance" required>
+      </div>
+
+      <div class="data">
+        <label>Sexe :</label>
+        <div class="radio-group">
+          <label><input type="radio" name="sexe" value="femme" required> Femme</label>
+          <label><input type="radio" name="sexe" value="homme" required> Homme</label>
+        </div>
+      </div>
+
+      <button type="submit">Créer un compte</button>
+    </form>
+  </div>
 </div>
 
 
