@@ -1,3 +1,4 @@
+
 /* Fond noir transparent */
 #modal {
   display: none;              /* caché au début */
@@ -15,7 +16,7 @@
 
 /* Boîte du formulaire */
 #box_formulaire {
-  background: white;
+  background: black;
   padding: 25px;
   width: 400px;
   max-width: 90%;
