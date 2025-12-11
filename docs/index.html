@@ -34,8 +34,10 @@
             <audio  id="son">
               <source src="Sound/horse-neigh-261131.mp3" type="audio/mpeg" />
            </audio>
+           <button id="valider-btn">Valider choix de cheval</button>
           </div>
-    
+
+          
         <div class="couleur">
           <img src="Img/sellefrancais/sellefrancais1.png"    id="sellefrancais1" class="img_sellefrancais">
           <img src="Img/sellefrancais/sellefrancais2.png"  id="sellefrancais2" class="img_sellefrancais">
@@ -52,46 +54,49 @@
         <audio autoplay id="son">
           <source src="Sound/horse-neigh-261131.mp3" type="audio/mpeg" />
         </audio>
-      <!--  <audio  id="son_baguette_magique">
+       <audio  id="son_baguette_magique">
           <source src="Sound/charming-twinkle-sound-for-fantasy-and-magic-250240.mp3" type="audio/mpeg" />
         </audio>
--->
-                <!--creation de partie de l'inscrit-->
+
+       
+
+
+      <!-- MODALE FORMULAIRE -->
+      <div id="modal">
         <div id="box_formulaire">
+          <span id="close_btn">&times;</span>
+
           <h2>Informations du cavalier</h2>
-            <form id="formulaire_cheval" >
+
+          <form id="formulaire_cheval" action="/register" method="POST">
             <div class="data">
-              <label for="nom">identifiant :</label>
-              <input type="text" id="nom" name="nom" placeholder="Votre nom" required>
+              <label for="nom">Identifiant :</label>
+              <input type="text" id="nom" name="nom" required>
             </div>
-      
+
             <div class="data">
-              <label for="prenom">nom de cheval :</label>
-              <input type="text" id="prenom" name="prenom" placeholder="Votre prénom" required>
+              <label for="prenom">Nom de cheval :</label>
+              <input type="text" id="prenom" name="prenom" required>
             </div>
-      
+
             <div class="data">
               <label for="date_naissance">Date de naissance :</label>
               <input type="date" id="date_naissance" name="date_naissance" required>
             </div>
-      
+
             <div class="data">
               <label>Sexe :</label>
               <div class="radio-group">
-                <label>
-                  <input type="radio" name="sexe" value="femme" required>
-                  Femme
-                </label>
-                <label>
-                  <input type="radio" name="sexe" value="homme" required>
-                  Homme
-                </label>
+                <label><input type="radio" name="sexe" value="femme" required> Femme</label>
+                <label><input type="radio" name="sexe" value="homme" required> Homme</label>
               </div>
             </div>
-            <button type="submit">Envoyer</button>
+
+            <button type="submit">Créer un compte</button>
           </form>
         </div>
-    
+      </div>
+
         
         <script src="Js/ajout.js" defer></script>
         <script src="Js/secondPage.js" defer></script></script>
