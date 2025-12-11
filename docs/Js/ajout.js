@@ -70,7 +70,24 @@ document.addEventListener('click', function(e) {
 
 
 
-let stable=document.getElementById('stable'); 
-stable.addEventListener('click', () => 
-        window.location.href = "inside.html"                                       
-                       );
+const modal = document.getElementById("modal");
+const btn = document.getElementById("valider-btn");
+const closeBtn = document.getElementById("close_btn");
+
+// Ouvrir la modale
+btn.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
+
+// Fermer en cliquant sur X
+closeBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// Fermer si on clique en dehors de la box
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+  
