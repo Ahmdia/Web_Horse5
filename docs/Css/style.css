@@ -1,8 +1,17 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
 body 
 {
   background-image: url("docs/Img/Decor/porte_fond.jpg");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   
 
   /*  background-image: url("une-porte-qui-s-etend-dans-un-monde-fantastique.jpg");
