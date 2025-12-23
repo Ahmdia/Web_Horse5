@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Chevaux</title>
+  <link rel="icon" type="image/png" href="jumping-horse-silhouette-facing-left-side-view.png">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="formulaire.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+  <script src="ajout.js" defer></script>
+  <script src="secondPage.js" defer></script>
+
+</head>
+
+<body>
+  <div id="main-container">
+
+    <div id="races">
+      <h1>Races</h1>
+      <h2 id="sellefrancais">Selle Français</h2>
+      <h2 id="paint_horse">Paint Horse</h2>
+      <h2 id="pottock">Pottock</h2>
+      <h2 id="pur_sang">Pur sang</h2>
+      <h2 id="shetland">Shetland</h2>
+      <h2 id="marawi">Marwari</h2>
+      <h2 id="akhal">Akhal-Téké</h2>
+    </div>
+
+    <div id="box_cheval">
+      <div id="fairy-container"></div>
+        <img src="Alz-b-grand.webp" id="cheval" alt="Cheval">
+      </div>      <audio id="son">
+        <source src="horse-neigh-261131.mp3" type="audio/mpeg" />
+      </audio>
+          <button id="valider-btn">Valider choix de cheval</button>
+
+    </div>
+
+    <div class="couleur">
+      <img src="sellefrancais/sellefrancais1.png" id="sellefrancais1" class="img_sellefrancais">
+      <img src="sellefrancais/sellefrancais2.png" id="sellefrancais2" class="img_sellefrancais">
+
+      <img src="PaintHorse/PH_Nouveau_BB_Pie_O_Alezan.png" id="PaintHorse1" class="img_PaintHorse">
+      <img src="PaintHorse/PH_Nouveau_Pie_overo_noir.png" id="PaintHorse2" class="img_PaintHorse">
+      <img src="PaintHorse/Pie-tb-alz-grand.png" id="PaintHorse3" class="img_PaintHorse">
+
+      <img src="Pottock/Bai-b-grand.png" id="pottock1" class="img_pottock">
+      <img src="Pottock/Pottok.png" id="pottock2" class="img_pottock">
+      <img src="Pottock/Pottock.png" id="pottock3" class="img_pottock">
+    </div>
+   
+
+
+
+
+
+<!-- MODALE FORMULAIRE -->
+<div id="modal">
+  <div id="box_formulaire">
+    <span id="close_btn">&times;</span>
+
+    <h2>Informations du cavalier</h2>
+
+    <form id="formulaire_cheval" action="/register" method="POST">
+      <div class="data">
+        <label for="nom">Identifiant :</label>
+        <input type="text" id="nom" name="nom" required>
+      </div>
+
+      <div class="data">
+        <label for="prenom">Nom de cheval :</label>
+        <input type="text" id="prenom" name="prenom" required>
+      </div>
+
+      <div class="data">
+        <label for="date_naissance">Date de naissance :</label>
+        <input type="date" id="date_naissance" name="date_naissance" required>
+      </div>
+
+      <div class="data">
+        <label>Sexe :</label>
+        <div class="radio-group">
+          <label><input type="radio" name="sexe" value="femme" required> Femme</label>
+          <label><input type="radio" name="sexe" value="homme" required> Homme</label>
+        </div>
+      </div>
+
+      <button type="submit">Créer un compte</button>
+    </form>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    <script>
+    const fairy = lottie.loadAnimation({
+      container: document.getElementById('fairy-container'), // div où apparaît la fée
+      renderer: 'svg',       // SVG pour que ce soit responsive
+      loop: false,           // joue une seule fois
+      autoplay: true,        // lance automatiquement
+      path: './baguette_magique.json' // chemin vers ton fichier JSON
+    });
+    // Quand l'animation est terminée, faire apparaître le cheval
+      fairy.addEventListener('complete', () => {
+        const cheval = document.getElementById('cheval');
+        const fairyContainer = document.getElementById('fairy-container');
+        //const son_baguette_magique = document.getElementById('son_baguette_magique');
+        //son_baguette_magique.play();
+        // Faire apparaître le cheval progressivement
+        cheval.style.opacity = 1;
+
+        // Faire disparaître la fée progressivement
+        fairyContainer.style.opacity = 0;
+        setTimeout(() => {
+          fairyContainer.style.display = 'none';
+        }, 1000); // correspond à la durée de la transition CSS
+      });
+    </script>
+  </div>
+</body>
+</html>
