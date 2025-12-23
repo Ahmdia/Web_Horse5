@@ -34,14 +34,15 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "index.html"));
 });
 
+
+
 // --- INSCRIPTION ---
 app.post("/register", (req, res) => {
     console.log("📥 Données reçues :", req.body);
     res.send("OK");
-});
-/*
+
+
     const { nom, prenom, date_naissance, sexe } = req.body;
-    const hashed = bcrypt.hashSync(prenom, 10);
 
     db.query("SELECT * FROM users WHERE nom = ?", [nom], (err, rows) => {
         if (rows.length > 0) {
@@ -50,7 +51,7 @@ app.post("/register", (req, res) => {
 
         db.query(
             "INSERT INTO users (nom, prenom, date_naissance, sexe) VALUES (?, ?, ?, ?)",
-            [nom, hashed, date_naissance, sexe],
+            [nom, prenom, date_naissance, sexe],
             (err) => {
                 if (err) throw err;
 
@@ -60,8 +61,8 @@ app.post("/register", (req, res) => {
             }
         );
     });
-}/** */
 
+});
 // --- CONNEXION ---
 app.post("/login", (req, res) => {
     const { nom, prenom } = req.body;
