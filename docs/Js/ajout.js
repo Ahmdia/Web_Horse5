@@ -14,7 +14,7 @@ const races = [
   { id: 'akhal', classImg: 'img_akhal' }
 ];
 
-// 2️⃣ Boucle sur chaque race pour ajouter un event click
+// Boucle sur chaque race pour ajouter un event click
 races.forEach(race => {
   let h2 = document.getElementById(race.id);
 
@@ -42,7 +42,11 @@ document.addEventListener('click', function(e) {
   if (e.target.classList.contains('img_sellefrancais')) {
     if (e.target.id === 'sellefrancais1') 
     {
+<<<<<<< HEAD:docs/Js/ajout.js
       cheval.src = "Img/sellefrancais/Rn-grand.webp";
+=======
+      cheval.src = "sellefrancais/Rn-grand.webp";
+>>>>>>> Eya_way:version1/ajout.js
     }
     if (e.target.id === 'sellefrancais2') 
     {
@@ -69,7 +73,37 @@ document.addEventListener('click', function(e) {
 }});
 
 
+const modal = document.getElementById("modal");
+const btn = document.getElementById("valider-btn");
+const closeBtn = document.getElementById("close_btn");
 
+// Ouvrir la modale
+btn.addEventListener("click", () => {
+  modal.style.display = "flex";
+});
+
+// Fermer en cliquant sur X
+closeBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+// Fermer si on clique en dehors de la box
+modal.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    modal.style.display = "none";
+  }
+});
+
+
+
+          
+
+
+
+
+
+
+<<<<<<< HEAD:docs/Js/ajout.js
 const modal = document.getElementById("modal");
 const btn = document.getElementById("valider-btn");
 const closeBtn = document.getElementById("close_btn");
@@ -91,3 +125,6 @@ modal.addEventListener("click", (e) => {
   }
 });
   
+=======
+
+>>>>>>> Eya_way:version1/ajout.js
