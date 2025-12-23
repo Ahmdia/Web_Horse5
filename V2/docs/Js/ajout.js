@@ -90,4 +90,38 @@ modal.addEventListener("click", (e) => {
     modal.style.display = "none";
   }
 });
-  
+
+
+const form = document.getElementById("formulaire_cheval");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault(); // 🚫 empêche le submit HTML classique
+
+  const nom = document.getElementById("nom").value;
+  const prenom = document.getElementById("prenom").value;
+  const date_naissance = document.getElementById("date_naissance").value;
+  const sexe = document.querySelector('input[name="sexe"]:checked').value;
+
+  try {
+    const response = await fetch("/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        nom,
+        prenom,
+        date_naissance,
+        sexe
+      })
+    });
+
+    const result = await response.text();
+    console.log("✅ Réponse serveur :", result);
+
+    // Exemple : fermer la modale après succès
+    modal.style.display = "none";
+
+  } catch (error) {
+    console.error("❌ Erreur lors de l'inscription :", error);
+  }
+});
