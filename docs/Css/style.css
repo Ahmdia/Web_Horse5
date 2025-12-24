@@ -186,9 +186,9 @@ body {
 }
 
 #PaintHorse3 {
-  top: 80%;
+  top: 105%;
   /* milieu vertical du parent */
-  left: 75%;
+  left: 70%;
   /* décalage vers la gauche */
   transform: translateY(-50%);
   visibility: hidden;
@@ -209,9 +209,9 @@ body {
 }
 
 #pottock3 {
-  top: 80%;
+  top: 105%;
   /* milieu vertical du parent */
-  left: 75%;
+  left: 70%;
   /* décalage vers la gauche */
   transform: translateY(-50%);
   visibility: hidden;

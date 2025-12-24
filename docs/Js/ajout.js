@@ -90,4 +90,55 @@ modal.addEventListener("click", (e) => {
     modal.style.display = "none";
   }
 });
-  
+
+
+const form = document.getElementById("formulaire_cheval");
+form.addEventListener("submit", async (e) => {
+  e.preventDefault(); // 🚫 empêche le submit HTML classique
+
+  const nom = document.getElementById("nom").value;
+  const prenom = document.getElementById("prenom").value;
+  const date_naissance = document.getElementById("date_naissance").value;
+  const sexe = document.querySelector('input[name="sexe"]:checked').value;
+
+  try {
+    const response = await fetch("/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({
+        nom,
+        prenom,
+        date_naissance,
+        sexe
+      })
+    });
+
+    const result = await response.text();
+    console.log("✅ Réponse serveur :", result);
+
+    // Exemple : fermer la modale après succès
+    modal.style.display = "none";
+
+  } catch (error) {
+    console.error("❌ Erreur lors de l'inscription :", error);
+  }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/user")
+        .then(response => response.json())
+        .then(data => {
+            const statusDiv = document.getElementById("user-status");
+            if (data.loggedIn) {
+                statusDiv.innerHTML = `
+                    <span>Bienvenue, <strong>${data.user.nom}</strong> !</span>
+                    <a href="/logout" style="color: #ff4d4d; margin-left: 10px;">Déconnexion</a>
+                `;
+                // Optionnel : masquer le bouton "Valider choix" si déjà connecté
+                document.getElementById("valider-btn").style.display = "none";
+            }
+        })
+        .catch(err => console.error("Erreur de session:", err));
+});
