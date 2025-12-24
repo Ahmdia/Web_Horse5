@@ -125,3 +125,20 @@ form.addEventListener("submit", async (e) => {
     console.error("❌ Erreur lors de l'inscription :", error);
   }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    fetch("/api/user")
+        .then(response => response.json())
+        .then(data => {
+            const statusDiv = document.getElementById("user-status");
+            if (data.loggedIn) {
+                statusDiv.innerHTML = `
+                    <span>Bienvenue, <strong>${data.user.nom}</strong> !</span>
+                    <a href="/logout" style="color: #ff4d4d; margin-left: 10px;">Déconnexion</a>
+                `;
+                // Optionnel : masquer le bouton "Valider choix" si déjà connecté
+                document.getElementById("valider-btn").style.display = "none";
+            }
+        })
+        .catch(err => console.error("Erreur de session:", err));
+});

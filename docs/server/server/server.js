@@ -26,60 +26,75 @@ const app = express();
 
 // --- MIDDLEWARES ---
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, ".."))); // sert tout le dossier docs/
+const publicPath = path.join(__dirname, "..", "..");
+console.log("Dossier racine pour les ressources :", publicPath);
+app.use(express.static(publicPath));
 
 app.use(session({
     secret: "secret-key",
     resave: false,
     saveUninitialized: false
 }));
-
-// --- PAGE PRINCIPALE (sert index.html) ---
+console.log("Le serveur cherche l'index ici :", path.join(__dirname, "..", "index.html"));
+// --- PAGE PRINCIPALE ---
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "..","..", "index.html"));
+    // On utilise le même chemin pour envoyer le fichier index.html
+    res.sendFile(path.join(publicPath, "index.html"));
 });
 
 
-
+// --- INSCRIPTION ---
 // --- INSCRIPTION ---
 app.post("/register", (req, res) => {
-    console.log("📥 Données reçues :", req.body);
-    res.send("OK");
-
-
     const { nom, prenom, date_naissance, sexe } = req.body;
 
+    // 1. Vérifier si l'utilisateur existe déjà
     db.query("SELECT * FROM users WHERE nom = ?", [nom], (err, rows) => {
+        if (err) return res.status(500).send("Erreur serveur");
+        
         if (rows.length > 0) {
             return res.send("Identifiant déjà utilisé !");
         }
 
+        // 2. HACHAGE du "mot de passe" (ici le prénom/nom du cheval)
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(prenom, salt);
+
+        // 3. Insertion en base avec le mot de passe haché
         db.query(
             "INSERT INTO users (nom, prenom, date_naissance, sexe) VALUES (?, ?, ?, ?)",
-            [nom, prenom, date_naissance, sexe],
+            [nom, hash, date_naissance, sexe],
             (err) => {
-                if (err) throw err;
+                if (err) {
+                    console.error(err);
+                    return res.send("Erreur lors de l'insertion");
+                }
 
-                // Créer une session pour l'utilisateur directement après inscription
+                // 4. Créer la session et rediriger
                 req.session.user = { nom };
-                res.redirect("/"); // plus de login.html
+                res.redirect("/"); 
             }
         );
     });
-
 });
+// --- CONNEXION ---
 // --- CONNEXION ---
 app.post("/login", (req, res) => {
     const { nom, prenom } = req.body;
 
     db.query("SELECT * FROM users WHERE nom = ?", [nom], (err, rows) => {
+        if (err) return res.status(500).send("Erreur serveur");
+        
         if (rows.length === 0) {
             return res.send("Identifiant introuvable");
         }
 
         const user = rows[0];
 
-        if (!bcrypt.compareSync(prenom, user.prenom)) {
+        // Compare le texte clair (prenom) avec le hash en base (user.prenom)
+        const passwordIsValid = bcrypt.compareSync(prenom, user.prenom);
+
+        if (!passwordIsValid) {
             return res.send("Nom de cheval incorrect");
         }
 
@@ -88,6 +103,14 @@ app.post("/login", (req, res) => {
     });
 });
 
+// Route pour savoir si l'utilisateur est connecté
+app.get("/api/user", (req, res) => {
+    if (req.session.user) {
+        res.json({ loggedIn: true, user: req.session.user });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
 // --- DÉCONNEXION ---
 app.get("/logout", (req, res) => {
     req.session.destroy();
