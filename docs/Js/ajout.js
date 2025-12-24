@@ -94,35 +94,38 @@ modal.addEventListener("click", (e) => {
 
 const form = document.getElementById("formulaire_cheval");
 form.addEventListener("submit", async (e) => {
-  e.preventDefault(); // 🚫 empêche le submit HTML classique
+  e.preventDefault();
 
   const nom = document.getElementById("nom").value;
   const prenom = document.getElementById("prenom").value;
   const date_naissance = document.getElementById("date_naissance").value;
   const sexe = document.querySelector('input[name="sexe"]:checked').value;
+  
+  // --- NOUVEAU : Récupérer le chemin de l'image affichée ---
+  // On récupère juste la fin du chemin (ex: Img/Pottock/Pottok.webp)
+  const imageComplet = document.getElementById("cheval").getAttribute("src");
 
   try {
     const response = await fetch("/register", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-      },
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         nom,
         prenom,
         date_naissance,
-        sexe
+        sexe,
+        image_cheval: imageComplet // On envoie le chemin au serveur
       })
     });
 
     const result = await response.text();
-    console.log("✅ Réponse serveur :", result);
-
-    // Exemple : fermer la modale après succès
-    modal.style.display = "none";
-
+    if (result === "Inscription réussie") {
+        window.location.reload();
+    } else {
+        alert(result);
+    }
   } catch (error) {
-    console.error("❌ Erreur lors de l'inscription :", error);
+    console.error("❌ Erreur :", error);
   }
 });
 
@@ -142,3 +145,4 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .catch(err => console.error("Erreur de session:", err));
 });
+
