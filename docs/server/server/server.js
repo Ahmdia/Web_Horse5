@@ -5,16 +5,21 @@ const path = require("path");
 const mysql = require("mysql2");
 
 // --- CONNEXION A LA BASE DE DONNÉES ---
+// --- CONNEXION A LA BASE DE DONNÉES DISTANTE ---
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "Tagadateam",
-    password: "T@g@d@.Polytech",
-    database: "tagadateam"
+    host: "mysql-tagadateam.alwaysdata.net", 
+    user: "448191",                       
+    password: "T@g@d@.Polytech",          
+    database: "tagadateam_base",            
+    ssl: {}                                 
 });
 
 db.connect((err) => {
-    if (err) throw err;
-    console.log("✔ Connecté à MySQL !");
+    if (err) {
+        console.error("❌ Erreur de connexion à Alwaysdata :", err.message);
+        return;
+    }
+    console.log("✔ Connecté à la base de données Alwaysdata !");
 });
 
 const app = express();
@@ -31,7 +36,7 @@ app.use(session({
 
 // --- PAGE PRINCIPALE (sert index.html) ---
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "index.html"));
+    res.sendFile(path.join(__dirname, "..","..", "index.html"));
 });
 
 
@@ -90,4 +95,12 @@ app.get("/logout", (req, res) => {
 });
 
 // --- LANCER LE SERVEUR ---
-app.listen(3000, () => console.log("🚀 Serveur lancé sur http://localhost:3000"));
+// On utilise le port donné par l'hébergeur, sinon le port 3000 par défaut
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`🚀 Serveur lancé sur le port ${PORT}`);
+    if (!process.env.PORT) {
+        console.log(`Lien local : http://localhost:${PORT}`);
+    }
+});
