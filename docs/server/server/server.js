@@ -42,42 +42,40 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(publicPath, "index.html"));
 });
 
-
-// --- INSCRIPTION ---
-// --- INSCRIPTION ---
 app.post("/register", (req, res) => {
-    const { nom, prenom, date_naissance, sexe } = req.body;
+    const { nom, prenom, date_naissance, sexe, image_cheval } = req.body;
 
-    // 1. Vérifier si l'utilisateur existe déjà
-    db.query("SELECT * FROM users WHERE nom = ?", [nom], (err, rows) => {
-        if (err) return res.status(500).send("Erreur serveur");
-        
-        if (rows.length > 0) {
-            return res.send("Identifiant déjà utilisé !");
-        }
+    // 1. On cherche d'abord l'ID du cheval
+    db.query("SELECT id FROM ecurie WHERE chemin_image = ?", [image_cheval], (err, ecurieRows) => {
+        if (err) return res.status(500).send("Erreur base ecurie");
 
-        // 2. HACHAGE du "mot de passe" (ici le prénom/nom du cheval)
+        const chevalId = (ecurieRows.length > 0) ? ecurieRows[0].id.toString() : null;
+
+        // 2. On hache le mot de passe
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(prenom, salt);
 
-        // 3. Insertion en base avec le mot de passe haché
+        // 3. On tente l'insertion
         db.query(
-            "INSERT INTO users (nom, prenom, date_naissance, sexe) VALUES (?, ?, ?, ?)",
-            [nom, hash, date_naissance, sexe],
+            "INSERT INTO users (nom, mot_de_passe, date_naissance, sexe, chevaux) VALUES (?, ?, ?, ?, ?)",
+            [nom, hash, date_naissance, sexe, chevalId],
             (err) => {
                 if (err) {
+                    // Si l'erreur est un doublon de NOM
+                    if (err.code === 'ER_DUP_ENTRY') {
+                        return res.send("Cet identifiant est déjà pris, choisis-en un autre !");
+                    }
                     console.error(err);
-                    return res.send("Erreur lors de l'insertion");
+                    return res.status(500).send("Erreur lors de l'inscription");
                 }
-
-                // 4. Créer la session et rediriger
-                req.session.user = { nom };
-                res.redirect("/"); 
+                
+                req.session.user = { nom: nom };
+                res.send("Inscription réussie");
             }
         );
     });
 });
-// --- CONNEXION ---
+
 // --- CONNEXION ---
 app.post("/login", (req, res) => {
     const { nom, prenom } = req.body;
@@ -92,8 +90,7 @@ app.post("/login", (req, res) => {
         const user = rows[0];
 
         // Compare le texte clair (prenom) avec le hash en base (user.prenom)
-        const passwordIsValid = bcrypt.compareSync(prenom, user.prenom);
-
+        const passwordIsValid = bcrypt.compareSync(prenom, user.mot_de_passe); 
         if (!passwordIsValid) {
             return res.send("Nom de cheval incorrect");
         }
@@ -127,3 +124,35 @@ app.listen(PORT, () => {
         console.log(`Lien local : http://localhost:${PORT}`);
     }
 });
+
+
+
+///////AFFICHAGE DYNAMIQUE//////////////////////
+/*
+fetch('/api/mon-ecurie')
+    .then(res => res.json())
+    .then(mesChevaux => {
+        mesChevaux.forEach(cheval => {
+            console.log(`Cheval : ${cheval.nom}, Vitesse : ${cheval.vitesse}`);
+            // Ici vous pouvez créer des balises <img> avec cheval.chemin_image
+        });
+    });*/
+    ///////Recuperation des chevaux de l'utilisateur//////////////////////
+/*
+    app.get("/api/mon-ecurie", (req, res) => {
+    if (!req.session.user) return res.status(401).send("Non connecté");
+
+    // 1. Récupérer la chaîne "1-5-12" de l'utilisateur
+    db.query("SELECT chevaux FROM users WHERE nom = ?", [req.session.user.nom], (err, rows) => {
+        if (err || rows.length === 0 || !rows[0].chevaux) return res.json([]);
+
+        // 2. Transformer "1-5-12" en tableau [1, 5, 12]
+        const ids = rows[0].chevaux.split('-').map(Number);
+
+        // 3. Chercher tous les chevaux correspondants dans la table 'chevaux'
+        db.query("SELECT * FROM chevaux WHERE id IN (?)", [ids], (err, results) => {
+            if (err) throw err;
+            res.json(results); // Envoie la liste complète des objets chevaux
+        });
+    });
+});*/
