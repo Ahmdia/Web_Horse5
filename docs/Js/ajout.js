@@ -120,7 +120,7 @@ form.addEventListener("submit", async (e) => {
 
     const result = await response.text();
     if (result === "Inscription réussie") {
-        window.location.reload();
+        window.location.href = "/main_page.html"; // Redirige vers la nouvelle page
     } else {
         alert(result);
     }
@@ -146,3 +146,11 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error("Erreur de session:", err));
 });
 
+/* For later UPDATE
+UPDATE users 
+SET chevaux = CONCAT(chevaux, '-', 'ID_NOUVEAU_CHEVAL') 
+WHERE nom = 'Jean' AND chevaux IS NOT NULL;
+// Comment transformer la colonne "chevaux" en tableau propre
+const listeChevaux = user.chevaux ? user.chevaux.split('-') : [];
+// Résultat si "1" -> ["1"]
+// Résultat si "1-5-8" -> ["1", "5", "8"]*/
