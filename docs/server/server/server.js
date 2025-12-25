@@ -24,17 +24,28 @@ db.connect((err) => {
 
 const app = express();
 
+
 // --- MIDDLEWARES ---
 app.use(express.urlencoded({ extended: true }));
-const publicPath = path.join(__dirname, "..", "..");
-console.log("Dossier racine pour les ressources :", publicPath);
-app.use(express.static(publicPath));
-
 app.use(session({
     secret: "secret-key",
     resave: false,
     saveUninitialized: false
 }));
+
+app.get("/main_page.html", (req, res, next) => {
+    if (!req.session.user) {
+        // Si pas de session, on renvoie à l'accueil
+        return res.redirect("/");
+    }
+    next(); // Sinon, on continue vers la page
+});
+
+const publicPath = path.join(__dirname, "..", "..");
+console.log("Dossier racine pour les ressources :", publicPath);
+app.use(express.static(publicPath));
+
+
 console.log("Le serveur cherche l'index ici :", path.join(__dirname, "..", "index.html"));
 // --- PAGE PRINCIPALE ---
 app.get("/", (req, res) => {
@@ -49,8 +60,8 @@ app.post("/register", (req, res) => {
     db.query("SELECT id FROM ecurie WHERE chemin_image = ?", [image_cheval], (err, ecurieRows) => {
         if (err) return res.status(500).send("Erreur base ecurie");
 
-        const chevalId = (ecurieRows.length > 0) ? ecurieRows[0].id.toString() : null;
 
+        const chevalId = (ecurieRows.length > 0) ? String(ecurieRows[0].id) : null;
         // 2. On hache le mot de passe
         const salt = bcrypt.genSaltSync(10);
         const hash = bcrypt.hashSync(prenom, salt);
@@ -82,21 +93,20 @@ app.post("/login", (req, res) => {
 
     db.query("SELECT * FROM users WHERE nom = ?", [nom], (err, rows) => {
         if (err) return res.status(500).send("Erreur serveur");
-        
-        if (rows.length === 0) {
-            return res.send("Identifiant introuvable");
-        }
+        if (rows.length === 0) return res.send("Identifiant introuvable");
 
         const user = rows[0];
-
-        // Compare le texte clair (prenom) avec le hash en base (user.prenom)
         const passwordIsValid = bcrypt.compareSync(prenom, user.mot_de_passe); 
+
         if (!passwordIsValid) {
             return res.send("Nom de cheval incorrect");
         }
 
+        // On enregistre l'utilisateur en session
         req.session.user = user;
-        res.redirect("/");
+
+        // IMPORTANT : Envoyer "OK" et rien d'autre !
+        res.send("OK"); 
     });
 });
 
@@ -114,17 +124,39 @@ app.get("/logout", (req, res) => {
     res.redirect("/");
 });
 
+
 // --- LANCER LE SERVEUR ---
 // On utilise le port donné par l'hébergeur, sinon le port 3000 par défaut
-const PORT = process.env.PORT || 3000;
 
+// --- Page main---
+app.get("/api/user-first-horse", (req, res) => {
+    if (!req.session.user) return res.status(401).json({ error: "Non connecté" });
+
+    // 1. Récupérer la chaîne d'IDs (ex: "1-5") de l'utilisateur
+    db.query("SELECT chevaux FROM users WHERE nom = ?", [req.session.user.nom], (err, rows) => {
+        if (err || rows.length === 0 || !rows[0].chevaux) {
+            return res.json({ found: false });
+        }
+
+        // 2. On prend le premier ID de la liste
+        const firstHorseId = rows[0].chevaux.split('-')[0];
+
+        // 3. On cherche les détails de ce cheval dans la table ecurie
+        db.query("SELECT * FROM ecurie WHERE id = ?", [firstHorseId], (err, horseRows) => {
+            if (err || horseRows.length === 0) return res.json({ found: false });
+            
+            res.json({ found: true, horse: horseRows[0] });
+        });
+    });
+});
+
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Serveur lancé sur le port ${PORT}`);
     if (!process.env.PORT) {
         console.log(`Lien local : http://localhost:${PORT}`);
     }
 });
-
 
 
 ///////AFFICHAGE DYNAMIQUE//////////////////////

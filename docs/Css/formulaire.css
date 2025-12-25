@@ -1,5 +1,5 @@
 /* Fond noir transparent */
-#modal {
+#modal,#modal-login {
   display: none;              /* caché au début */
   position: fixed;
   top: 0;
@@ -14,7 +14,7 @@
 }
 
 /* Boîte du formulaire */
-#box_formulaire {
+#box_formulaire, #box_formulaire_login{
   background: white;
   padding: 25px;
   width: 400px;

@@ -120,7 +120,7 @@ form.addEventListener("submit", async (e) => {
 
     const result = await response.text();
     if (result === "Inscription réussie") {
-        window.location.reload();
+        window.location.href = "/main_page.html"; // Redirige vers la nouvelle page
     } else {
         alert(result);
     }
@@ -128,6 +128,7 @@ form.addEventListener("submit", async (e) => {
     console.error("❌ Erreur :", error);
   }
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
     fetch("/api/user")
@@ -146,3 +147,56 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error("Erreur de session:", err));
 });
 
+
+// Éléments pour la modale Login
+const modalLogin = document.getElementById("modal-login");
+const btnLogin = document.getElementById("login-btn");
+const closeLoginBtn = document.getElementById("close_login_btn");
+const formLogin = document.getElementById("formulaire_login");
+
+// Ouvrir la modale login
+btnLogin.addEventListener("click", () => {
+    modalLogin.style.display = "flex";
+});
+
+// Fermer la modale login
+closeLoginBtn.addEventListener("click", () => {
+    modalLogin.style.display = "none";
+});
+
+// Envoi du formulaire de connexion
+
+formLogin.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const nom = document.getElementById("login_nom").value;
+    const prenom = document.getElementById("login_prenom").value;
+
+    try {
+        const response = await fetch("/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: new URLSearchParams({ nom, prenom })
+        });
+
+        const result = await response.text();
+
+        if (result === "OK") {
+            // C'EST ICI QUE LA REDIRECTION SE FAIT
+            window.location.href = "/main_page.html";
+        } else {
+            // Affiche l'erreur (ex: "Identifiant introuvable")
+            alert(result);
+        }
+    } catch (error) {
+        console.error("Erreur réseau :", error);
+    }
+});
+/* For later UPDATE
+UPDATE users 
+SET chevaux = CONCAT(chevaux, '-', 'ID_NOUVEAU_CHEVAL') 
+WHERE nom = 'Jean' AND chevaux IS NOT NULL;
+// Comment transformer la colonne "chevaux" en tableau propre
+const listeChevaux = user.chevaux ? user.chevaux.split('-') : [];
+// Résultat si "1" -> ["1"]
+// Résultat si "1-5-8" -> ["1", "5", "8"]*/

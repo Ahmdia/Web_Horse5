@@ -238,10 +238,23 @@ body {
 
 }
 
-#valider-btn {
+#valider-btn{
   position: absolute;
   bottom: 0;           /* Le place en bas de la div */
-  left: 50%;
+  left: 45%;
+  transform: translateX(-50%);
+  padding: 10px 20px;
+  font-size: 1vw;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: white;
+}
+
+ #login-btn{
+  position: absolute;
+  bottom: 0;           /* Le place en bas de la div */
+  left: 55%;
   transform: translateX(-50%);
   padding: 10px 20px;
   font-size: 1vw;
