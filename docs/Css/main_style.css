@@ -40,11 +40,70 @@ body::before {
     flex-direction: row;
 }
 
+/* Conteneur parent pour positionner les slots par rapport au cheval */
 #horse-display-zone {
+    position: relative; /* Important pour le placement des slots */
     flex: 0 0 25%;
-    text-align: -webkit-center ;
+    text-align: -webkit-center;
 }
 
+.action-slots {
+    position: absolute;
+    top: 10%;    /* Ajuste selon la hauteur du cheval */
+    left: 80%;   /* Positionne à droite de l'image */
+    width: 200px;
+    height: 300px;
+    pointer-events: none; /* Permet de cliquer sur le cheval derrière si besoin */
+}
+.slot {
+    pointer-events: auto;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px solid #9e9e9e;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    
+    /* CURSEUR MICRO-MAIN */
+    cursor: pointer; 
+
+    /* Ta nouvelle position */
+    transform: translate(
+        calc(cos(var(--i) * 15deg) * 90px), 
+        calc(sin(var(--i) * 10deg) * 375px)
+    );
+}
+.icon-item {
+    width: 100%;  /* L'image prend 70% de la place du cercle */
+    height: 100%;
+    object-fit: contain; /* Garde les proportions de l'image */
+    pointer-events: none; /* L'image ne bloque pas le clic sur le slot */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Donne un peu de relief aux objets */
+}
+
+/* Optionnel : un petit effet d'échelle sur l'icône quand on survole le slot */
+.slot:hover .icon-item {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+       background: rgba(255, 255, 255, 0.6); /* Devient un peu plus opaque */
+    border-color: #ffffff;               /* Le bord devient blanc brillant */
+}
+
+/*
+.slot:hover {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: #d4af37; /* Or au survol *
+    transform: scale(1.1) translate(
+        calc(cos(var(--i) * 30deg) * 65px), 
+        calc(sin(var(--i) * 35deg) * 125px)
+    );
+}
+*/
 #user-horse-img {
     width: 100%;
     max-width: 500px;
@@ -60,10 +119,15 @@ body::before {
 }
 
 #user-horse-name {
-    color: white;
-    font-size: 2rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
-    margin-top: 20px;
+    color: #3e2723;
+    background: #f3e5ab;
+    padding: 5px 20px;
+    border: 3px solid #4e342e;
+    border-radius: 20px;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: inline-block;
+    margin-top: 15px;
 }
 
 /* Fenêtre État Style Ferme */
@@ -145,14 +209,17 @@ body::before {
 }
 
 /* Étoiles */
+/* Étoiles version classique */
 .stars-container {
-    color: #d4af37;
-    letter-spacing: 1px;
-    font-size: 0.85rem;
+    color: #d4af37; /* Couleur Or */
+    letter-spacing: 2px;
+    font-size: 1rem;
+    white-space: nowrap;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
 }
 
 .star-empty {
-    color: rgba(62, 39, 35, 0.2);
+    color: rgba(62, 39, 35, 0.2); /* Brun très clair pour les étoiles vides */
 }
 
 /* Couleurs des barres */
