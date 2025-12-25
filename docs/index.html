@@ -34,6 +34,8 @@
               <source src="Sound/horse-neigh-261131.mp3" type="audio/mpeg" />
            </audio>
            <button id="valider-btn">Créer un compte</button>
+            <button id="login-btn">Se connecter</button> 
+
           </div>
 
           
@@ -95,6 +97,27 @@
           </form>
         </div>
       </div>
+
+        <div id="modal-login" class="modal-style"> <div id="box_formulaire_login" class="box_formulaire_style">
+            <span id="close_login_btn" class="close_btn">&times;</span>
+
+            <h2>Connexion au Ranch</h2>
+
+            <form id="formulaire_login">
+              <div class="data">
+                <label for="login_nom">Identifiant :</label>
+                <input type="text" id="login_nom" name="nom" required>
+              </div>
+
+              <div class="data">
+                <label for="login_prenom">Nom de cheval (Mot de passe) :</label>
+                <input type="password" id="login_prenom" name="prenom" required>
+              </div>
+
+              <button type="submit">Entrer dans l'écurie</button>
+            </form>
+          </div>
+        </div>
 
         
         <script src="Js/ajout.js" defer></script>

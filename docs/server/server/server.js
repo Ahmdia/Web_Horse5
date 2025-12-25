@@ -24,17 +24,28 @@ db.connect((err) => {
 
 const app = express();
 
+
 // --- MIDDLEWARES ---
 app.use(express.urlencoded({ extended: true }));
-const publicPath = path.join(__dirname, "..", "..");
-console.log("Dossier racine pour les ressources :", publicPath);
-app.use(express.static(publicPath));
-
 app.use(session({
     secret: "secret-key",
     resave: false,
     saveUninitialized: false
 }));
+
+app.get("/main_page.html", (req, res, next) => {
+    if (!req.session.user) {
+        // Si pas de session, on renvoie à l'accueil
+        return res.redirect("/");
+    }
+    next(); // Sinon, on continue vers la page
+});
+
+const publicPath = path.join(__dirname, "..", "..");
+console.log("Dossier racine pour les ressources :", publicPath);
+app.use(express.static(publicPath));
+
+
 console.log("Le serveur cherche l'index ici :", path.join(__dirname, "..", "index.html"));
 // --- PAGE PRINCIPALE ---
 app.get("/", (req, res) => {
@@ -82,21 +93,20 @@ app.post("/login", (req, res) => {
 
     db.query("SELECT * FROM users WHERE nom = ?", [nom], (err, rows) => {
         if (err) return res.status(500).send("Erreur serveur");
-        
-        if (rows.length === 0) {
-            return res.send("Identifiant introuvable");
-        }
+        if (rows.length === 0) return res.send("Identifiant introuvable");
 
         const user = rows[0];
-
-        // Compare le texte clair (prenom) avec le hash en base (user.prenom)
         const passwordIsValid = bcrypt.compareSync(prenom, user.mot_de_passe); 
+
         if (!passwordIsValid) {
             return res.send("Nom de cheval incorrect");
         }
 
+        // On enregistre l'utilisateur en session
         req.session.user = user;
-        res.redirect("/");
+
+        // IMPORTANT : Envoyer "OK" et rien d'autre !
+        res.send("OK"); 
     });
 });
 
@@ -113,6 +123,7 @@ app.get("/logout", (req, res) => {
     req.session.destroy();
     res.redirect("/");
 });
+
 
 // --- LANCER LE SERVEUR ---
 // On utilise le port donné par l'hébergeur, sinon le port 3000 par défaut
