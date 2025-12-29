@@ -5,11 +5,165 @@ html, body {
     width: 100%;
 }
 
+/*****************************************EN-TETE*******************************************/
+/* --- HEADER LARGE ET STYLE --- */
+/*****************************************EN-TETE*******************************************/
+#game-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: #f3e5ab url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+    border-bottom: 6px double #4e342e;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style spécifique pour l'image du logo dans l'en-tête */
+.header-logo {
+    height: 90px; /* Ajuste la taille selon tes besoins */
+    width: auto;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); /* Donne du relief */
+    transition: transform 0.3s ease;
+}
+
+.header-logo:hover {
+    transform: scale(1.05) rotate(-5deg); /* Petit effet sympa au survol */
+}
+
+/* On s'assure que le conteneur décor ne bloque pas le centrage */
+.decoration-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px; /* Largeur fixe pour équilibrer avec le côté droit */
+}
+.header-main-content {
+    display: flex;
+    justify-content: space-between; /* Espace entre décor, titre et profil */
+    align-items: center;
+    padding: 10px 50px;
+    height: 120px; 
+}
+
+.title-container {
+    text-align: center;
+    flex-grow: 1; /* Permet au titre de prendre toute la place centrale */
+}
+
+.game-title {
+    font-family: 'Rye', cursive;
+    font-size: 4rem; /* Encore plus grand */
+    color: #3e2723;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+}
+
+.title-underline {
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #4e342e, transparent);
+    width: 60%;
+    margin: 0 auto;
+}
+
+/* ZONE UTILISATEUR ET PROFIL */
+.user-area {
+    display: flex;
+    align-items: center;
+}
+
+.user-info-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(78, 52, 46, 0.1);
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 2px solid #4e342e;
+}
+
+.profile-container {
+    position: relative;
+}
+
+.profile-circle {
+    width: 55px;
+    height: 55px;
+    background: #4e342e;
+    border-radius: 50%;
+    border: 3px solid #d4af37;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-circle img {
+    width: 30px;
+    filter: invert(1);
+}
+
+/* NAVIGATION BASSE */
+.header-nav-expanded {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 60px;
+    background: #3e2723; /* Marron très foncé pour le contraste */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: #f3e5ab;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: #d4af37;
+}
+
+/* PANNEAU MONNAIE */
+.currency-panel {
+    background: #d4af37;
+    padding: 5px 20px;
+    border-radius: 20px;
+    border: 2px solid #4e342e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.coin-img {
+    width: 25px;
+}
+
+#coin-amount { font-weight: bold; color: #4e342e; }
+.coin-icon { width: 20px; height: 20px; }
+
+
+/*****************************************CORPS DU MAIN*******************************************/
 body {
     position: relative;
     display: flex;
     justify-content: center;
-    align-items: center;
+    padding-top: 180px; /* Pour ne pas être sous le header */
+    align-items: flex-start; /* On commence sous le header */
     overflow: hidden; /* Empêche le scroll si le flou déborde */
 }
 
@@ -21,10 +175,10 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../Img/Decor/porte_fond.jpg"); /* Ton image */
+    background-image: url("../Img/Decor/main_2.jpg"); /* Ton image */
     background-size: cover;
     background-position: center;
-    filter: blur(8px); /* Ajuste le flou ici (8px est un bon début) */
+    /*filter: blur(8px); /* Ajuste le flou ici (8px est un bon début) */
     transform: scale(1.1); /* Zoom léger pour éviter les bords blancs dus au flou */
     z-index: -1; /* Place le fond derrière le contenu */
 }
@@ -43,7 +197,7 @@ body::before {
 /* Conteneur parent pour positionner les slots par rapport au cheval */
 #horse-display-zone {
     position: relative; /* Important pour le placement des slots */
-    flex: 0 0 25%;
+    flex: 0 0 75%;
     text-align: -webkit-center;
 }
 
@@ -106,7 +260,7 @@ body::before {
 */
 #user-horse-img {
     width: 100%;
-    max-width: 500px;
+    max-width: 650px;
     height: auto;
     /* Petit effet d'ombre pour détacher le cheval du fond flou */
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
@@ -138,8 +292,10 @@ body::before {
 #panels-container {
     display: flex;
     gap: 15px;
-    justify-content: center;
     margin-top: 15px;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
     width: 100%;
 }
 
@@ -205,7 +361,7 @@ body::before {
 .progress-fill {
     height: 100%;
     width: 0%;
-    transition: width 1s ease-in-out;
+    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effet rebond sympa */
 }
 
 /* Étoiles */
@@ -236,3 +392,5 @@ body::before {
         flex: 0 0 100%;
     }
 }
+
+
