@@ -25,3 +25,16 @@ CREATE TABLE chevaux (
 -- Exemple d'insertion pour tester
 INSERT INTO chevaux (nom, chemin_image, endurance, vitesse, dressage, galop, trot, saut)
 VALUES ('Selle Français', 'Img/sellefrancais/sellefrancais1.png', 80, 70, 90, 85, 75, 95);
+
+############################## TABLE Chevaux Utilisateurs ##############################
+CREATE TABLE possede_chevaux (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,                  -- ID du propriétaire
+    ecurie_id INT,                -- ID du modèle de cheval (race/image)
+    nom_personnalise VARCHAR(255), -- Au cas où l'utilisateur veut le renommer
+    energie INT DEFAULT 50,
+    sante INT DEFAULT 50,
+    moral INT DEFAULT 50,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (ecurie_id) REFERENCES ecurie(id)
+);
