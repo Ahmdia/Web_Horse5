@@ -103,7 +103,12 @@ form.addEventListener("submit", async (e) => {
   
   // --- NOUVEAU : Récupérer le chemin de l'image affichée ---
   // On récupère juste la fin du chemin (ex: Img/Pottock/Pottok.webp)
-  const imageComplet = document.getElementById("cheval").getAttribute("src");
+ const imageComplet = document.getElementById("cheval").getAttribute("src");
+
+ // Sécurité : si le chemin commence par "/", on l'enlève pour correspondre à la BDD
+if (imageComplet.startsWith("/")) {
+    imageComplet = imageComplet.substring(1);
+}
 
   try {
     const response = await fetch("/register", {

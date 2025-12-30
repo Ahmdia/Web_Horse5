@@ -4,7 +4,7 @@ let horseStats = {
     sante: 0,
     moral: 0
 };
-
+let userCoins = 0;
 let currentHorseId = null; // Pour savoir quel cheval on modifie
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -31,16 +31,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 setInterval(baisserStatsAutomatiquement, 300000);
             }
         });
+
+        
+    fetch("/api/user")
+            .then(res => res.json())
+            .then(data => {
+                if (data.loggedIn) {
+                    document.getElementById("user-name-display").innerText = data.user.nom;
+                    userCoins = data.user.argent || 0; // On récupère l'argent de la session
+                    document.getElementById("coin-amount").innerText = userCoins;
+                }
+            });
 });
 
+
 // 1. Affichage du nom de l'utilisateur (récupéré via ta route /api/user existante)
-fetch("/api/user")
-    .then(res => res.json())
-    .then(data => {
-        if (data.loggedIn) {
-            document.getElementById("user-name-display").innerText = data.user.nom;
-        }
-    });
 
 // 2. Gestion du menu déroulant Profil
 const profileTrigger = document.getElementById("profile-trigger");
@@ -56,7 +61,6 @@ window.addEventListener("click", () => {
     dropdown.classList.remove("show");
 });
 
-// On remplace l'ancienne fonction initStats par celle-ci
 function initStats(horse) {
     horseStats.energie = horse.energie;
     horseStats.sante = horse.sante;
@@ -80,12 +84,42 @@ function sauvegarderStatsBDD() {
     });
 }
 
+function sauvegarderArgentBDD() {
+    fetch("/api/update-money", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({ montant: userCoins })
+    });
+}
+
 function setupActionButtons() {
     const slots = document.querySelectorAll('.slot');
+    
+    // Définition des prix
+    const prices = {
+        "Carotte": 10,
+        "Brosse": 10,
+        "Eau": 5,
+        "Foin": 5,
+        "Cure-pied": 20
+    };
+
     slots.forEach(slot => {
         slot.addEventListener('click', () => {
             const type = slot.querySelector('img').alt;
+            const cout = prices[type];
+            if (userCoins < cout) {
+                const display = document.getElementById("coin-amount");
+                display.style.color = "red"; // Le texte devient rouge
+                setTimeout(() => { display.style.color = "#3e2723"; }, 1000); // Repasse au marron après 1s
+                return;
+            }
 
+            // DÉDUCTION ET MISE À JOUR VISUELLE
+            userCoins -= cout;
+            document.getElementById("coin-amount").innerText = userCoins;
+
+            // LOGIQUE DES STATS
             if (type === "Carotte") horseStats.energie += 15;
             else if (type === "Foin") horseStats.energie += 5;
             else if (type === "Eau") { horseStats.energie += 10; horseStats.sante += 5; }
@@ -93,7 +127,8 @@ function setupActionButtons() {
             else if (type === "Cure-pied") { horseStats.sante += 10; horseStats.moral += 15; }
             
             updateVisualBars();
-            sauvegarderStatsBDD(); // SAUVEGARDE AUTOMATIQUE APRÈS CLIC
+            sauvegarderStatsBDD();
+            sauvegarderArgentBDD(); // Nouvelle fonction
         });
     });
 }
@@ -113,33 +148,6 @@ function updateVisualBars() {
         if (horseStats[s] < 0) horseStats[s] = 0;
         document.getElementById(`bar-${s}`).style.width = horseStats[s] + "%";
     }
-}
-
-function setupActionButtons() {
-    const slots = document.querySelectorAll('.slot');
-    
-    slots.forEach(slot => {
-        slot.addEventListener('click', () => {
-            const type = slot.querySelector('img').alt;
-
-            if (type === "Carotte") {
-                horseStats.energie += 15;
-            } else if (type === "Foin") {
-                horseStats.energie += 5;
-            } else if (type === "Eau") {
-                horseStats.energie += 10;
-                horseStats.sante += 5;
-            } else if (type === "Brosse") {
-                horseStats.sante += 5;
-                horseStats.moral += 10;
-            } else if (type === "Cure-pied") {
-                horseStats.sante += 10;
-                horseStats.moral += 15;
-            }
-            
-            updateVisualBars();
-        });
-    });
 }
 
 // Fonction pour la baisse toutes les 5 minutes

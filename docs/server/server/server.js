@@ -110,7 +110,7 @@ app.post("/login", (req, res) => {
         }
 
         // On stocke l'ID et le NOM dans la session
-        req.session.user = { id: user.id, nom: user.nom };
+        req.session.user = { id: user.id, nom: user.nom, argent: user.argent };
         res.send("OK");
     });
 });
@@ -168,6 +168,17 @@ app.post("/api/update-horse-stats", (req, res) => {
     
     db.query(sql, [energie, sante, moral, horseId, req.session.user.id], (err) => {
         if (err) return res.status(500).send("Erreur sauvegarde");
+        res.send("OK");
+    });
+});
+
+//Gestion des pieces
+
+app.post("/api/update-money", (req, res) => {
+    if (!req.session.user) return res.status(401).send("Non connecté");
+    const { montant } = req.body;
+    db.query("UPDATE users SET argent = ? WHERE id = ?", [montant, req.session.user.id], (err) => {
+        if (err) return res.status(500).send("Erreur monnaie");
         res.send("OK");
     });
 });

@@ -10,7 +10,7 @@ CREATE TABLE users (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ############################## TABLE ecurie ##############################
-CREATE TABLE chevaux (
+CREATE TABLE ecurie (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nom VARCHAR(100) NOT NULL,
     chemin_image VARCHAR(255) NOT NULL, -- Ex: "Img/Pottock/Bai-b-grand.png"
@@ -23,9 +23,17 @@ CREATE TABLE chevaux (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Exemple d'insertion pour tester
-INSERT INTO chevaux (nom, chemin_image, endurance, vitesse, dressage, galop, trot, saut)
-VALUES ('Selle Français', 'Img/sellefrancais/sellefrancais1.png', 80, 70, 90, 85, 75, 95);
-
+INSERT INTO ecurie (nom, chemin_image, endurance, vitesse, dressage, galop, trot, saut)
+VALUES (
+    'Selle Français', 
+    'Img/sellefrancais/sellefrancais1.png', 
+    FLOOR(35 + RAND() * 66), -- Endurance entre 0 et 100
+    FLOOR(35 + RAND() * 66), -- Vitesse entre 0 et 100
+    FLOOR(35 + RAND() * 66), -- Dressage entre 0 et 100
+    FLOOR(35 + RAND() * 66), -- Galop entre 0 et 100
+    FLOOR(35 + RAND() * 66), -- Trot entre 0 et 100
+    FLOOR(35 + RAND() * 66)  -- Saut entre 0 et 100
+);
 ############################## TABLE Chevaux Utilisateurs ##############################
 CREATE TABLE possede_chevaux (
     id INT AUTO_INCREMENT PRIMARY KEY,
