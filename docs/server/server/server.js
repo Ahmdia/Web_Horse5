@@ -131,7 +131,7 @@ app.get("/logout", (req, res) => {
 
 // --- LANCER LE SERVEUR ---
 // On utilise le port donné par l'hébergeur, sinon le port 3000 par défaut
-
+//###################  Main Page ########################//
 app.get("/api/user-first-horse", (req, res) => {
     if (!req.session.user) return res.status(401).json({ error: "Non connecté" });
 
@@ -182,6 +182,20 @@ app.post("/api/update-money", (req, res) => {
         res.send("OK");
     });
 });
+
+//###################  Boutique ########################//
+// Route pour récupérer le catalogue de l'écurie
+app.get("/api/ecurie-list", (req, res) => {
+    const query = "SELECT * FROM ecurie";
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Erreur lors de la récupération de l'écurie:", err);
+            return res.status(500).json({ error: "Erreur serveur" });
+        }
+        res.json(results);
+    });
+});
+
 ///////AFFICHAGE DYNAMIQUE//////////////////////
 /*
 fetch('/api/mon-ecurie')

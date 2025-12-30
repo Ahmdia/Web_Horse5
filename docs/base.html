@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="Css/main_style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+    <title>{% block title %}Tagade Center{% endblock %}</title>
+</head>
+<body>
+ <header id="game-header" class="large-header">
+            <div class="header-main-content">
+                <div class="header-decor decoration-left">
+                    <img src="Img/Icons/Embleme_title1.png" alt="Logo Tagade Center" class="header-logo">
+                </div>
+
+                <div class="title-container">
+                    <h1 class="game-title">Tagade Center</h1>
+                    <div class="title-underline"></div>
+                </div>
+
+                <div class="user-area">
+                    <div class="user-info-block">
+                        <span id="welcome-msg">Bienvenue, <br><strong id="user-name-display">Cavalier</strong></span>
+                        <div class="profile-container">
+                            <div class="profile-circle" id="profile-trigger">
+                                <img src="Img/Icons/horse.png"> <!--- alt="User"-->
+                                <div class="arrow-indicator">▼</div>
+                            </div>
+                            <div class="dropdown-menu" id="user-dropdown">
+                                <a href="/logout">Déconnexion</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="header-nav-expanded">
+                <ul class="nav-links">
+                    <li><a href="main_page.html" class="active">🏠 Mon Centre</a></li>
+                    <li><a href="Chevaux_Users.html">🐎 Mes Chevaux</a></li>
+                    <li><a href="boutique.html">🛒 Shop</a></li>
+                    <li><a href="mini_jeu.html">🏆 Compétitions</a></li>
+                </ul>
+
+                <div class="currency-panel">
+                    <img src="Img/Icons/coin1.png" alt="Pièces" class="coin-img">
+                    <span id="coin-amount">0 </span>
+                </div>
+            </nav>
+        </header>
+
+    {% block content %}{% endblock %}
+
+    <script src="Js/common_header.js"></script> {% block extra_js %}{% endblock %}
+</body>
+</html>
