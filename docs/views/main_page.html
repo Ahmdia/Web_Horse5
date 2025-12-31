@@ -1,53 +1,6 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Mon Écurie - Horse World</title>
-    <link rel="stylesheet" href="Css/main_style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Rye&display=swap" rel="stylesheet">
-</head>
-<body>
-        <header id="game-header" class="large-header">
-            <div class="header-main-content">
-                <div class="header-decor decoration-left">
-                    <img src="Img/Icons/Embleme_title1.png" alt="Logo Tagade Center" class="header-logo">
-                </div>
+{% extends "base.html" %}
 
-                <div class="title-container">
-                    <h1 class="game-title">Tagade Center</h1>
-                    <div class="title-underline"></div>
-                </div>
-
-                <div class="user-area">
-                    <div class="user-info-block">
-                        <span id="welcome-msg">Bienvenue, <br><strong id="user-name-display">Cavalier</strong></span>
-                        <div class="profile-container">
-                            <div class="profile-circle" id="profile-trigger">
-                                <img src="Img/Icons/horse.png"> <!--- alt="User"-->
-                                <div class="arrow-indicator">▼</div>
-                            </div>
-                            <div class="dropdown-menu" id="user-dropdown">
-                                <a href="/logout">Déconnexion</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <nav class="header-nav-expanded">
-                <ul class="nav-links">
-                    <li><a href="main_page.html" class="active">🏠 Mon Centre</a></li>
-                    <li><a href="Chevaux_Users.html">🐎 Mes Chevaux</a></li>
-                    <li><a href="Boutique.html">🛒 Shop</a></li>
-                    <li><a href="mini_jeu.html">🏆 Compétitions</a></li>
-                </ul>
-
-                <div class="currency-panel">
-                    <img src="Img/Icons/coin1.png" alt="Pièces" class="coin-img">
-                    <span id="coin-amount">0 </span>
-                </div>
-            </nav>
-        </header>
+{% block content %}
       <div id="main-container">
         <div id="horse-display-zone">
             <img id="user-horse-img" src="" alt="Mon cheval" style="display: none;">
@@ -69,8 +22,20 @@
                     <img src="Img/Icons/hoof-pick2.png" alt="Cure-pied" class="icon-item">
                 </div>
             </div>
-            <h2 id="user-horse-name"></h2>
+            <div class="name-edit-container">
+                <div id="name-display-group">
+                    <h2 id="user-horse-name"></h2>
+                    <img src="Img/Icons/pencil.png" id="edit-name-btn" class="edit-icon" title="Modifier le nom">
+                </div>
 
+                <div id="name-edit-group" style="display: none;">
+                    <input type="text" id="name-input" class="ranch-input">
+                    <div class="edit-controls">
+                        <span id="confirm-name" class="control-btn check" title="Valider">✔</span>
+                        <span id="cancel-name" class="control-btn cross" title="Annuler">✖</span>
+                    </div>
+                </div>
+            </div>
            
         </div>
          <div id="panels-container">
@@ -101,7 +66,7 @@
                 </div>
             </div>
     </div>
-
-    <script src="Js/main_page.js"></script> 
-</body>
-</html>
+{% endblock %}
+{% block extra_js %}
+<script src="Js/main_page.js"></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block body_class %}boutique-body{% endblock %} {% block extra_css %}
+    <link rel="stylesheet" href="Css/boutique_style.css">
+    <style>
+        .active-card { border-color: #d4af37 !important; background-color: #fff9c4 !important; }
+        .status-badge { color: #d4af37; font-weight: bold; margin-bottom: 5px; }
+    </style>
+{% endblock %}
+
+{% block content %}
+<main id="shop-container">
+    <div class="shop-category-title">
+        <h2>🐴 Mes Écuries</h2>
+        <p>Gérez vos compagnons et choisissez votre partenaire actuel</p>
+    </div>
+    <div id="my-horses-grid" class="shop-grid">
+        </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="Js/mes_chevaux.js"></script>
+{% endblock %}

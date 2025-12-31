@@ -1,4 +1,4 @@
 document.getElementById("formulaire_cheval").addEventListener("submit", function(e) {
     e.preventDefault();
-    window.location.href = "main_page.html";
+    window.location.href = "/main_page";
 });

@@ -1,27 +1,21 @@
-// On stocke les valeurs actuelles pour pouvoir les modifier facilement
-let horseStats = {
-    energie: 0,
-    sante: 0,
-    moral: 0
-};
-let userCoins = 0;
-let currentHorseId = null; // Pour savoir quel cheval on modifie
+let horseStats = { energie: 0, sante: 0, moral: 0 };
+let userCoins = 0; // On le garde pour la vérification locale
+let currentHorseId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+    // 1. Charger le cheval
     fetch("/api/user-first-horse")
         .then(res => res.json())
         .then(data => {
             if (data.found) {
                 const horse = data.horse;
-                currentHorseId = horse.id; // On stocke l'ID du cheval
-
+                currentHorseId = horse.id;
                 document.getElementById("user-horse-img").src = horse.chemin_image;
                 document.getElementById("user-horse-img").style.display = "block";
                 document.getElementById("user-horse-name").innerText = horse.nom_personnalise || horse.nom;
 
-                // INITIALISATION avec les vraies valeurs de la BDD
+                
                 initStats(horse); 
-
                 const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
                 aptitudes.forEach(apt => {
                     afficherEtoiles(`star-${apt}`, Math.round(horse[apt] / 10));
@@ -32,33 +26,59 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        
+    // 2. Récupérer juste l'argent pour la logique des boutons
     fetch("/api/user")
-            .then(res => res.json())
-            .then(data => {
-                if (data.loggedIn) {
-                    document.getElementById("user-name-display").innerText = data.user.nom;
-                    userCoins = data.user.argent || 0; // On récupère l'argent de la session
-                    document.getElementById("coin-amount").innerText = userCoins;
-                }
-            });
+        .then(res => res.json())
+        .then(data => {
+            if (data.loggedIn) {
+                userCoins = data.user.argent || 0;
+            }
+        });
+
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const displayGroup = document.getElementById("name-display-group");
+    const editGroup = document.getElementById("name-edit-group");
+    const nameLabel = document.getElementById("user-horse-name");
+    const nameInput = document.getElementById("name-input");
+    
+    const editBtn = document.getElementById("edit-name-btn");
+    const confirmBtn = document.getElementById("confirm-name");
+    const cancelBtn = document.getElementById("cancel-name");
 
-// 1. Affichage du nom de l'utilisateur (récupéré via ta route /api/user existante)
+    // Passer en mode édition
+    editBtn.addEventListener("click", () => {
+        nameInput.value = nameLabel.innerText;
+        displayGroup.style.display = "none";
+        editGroup.style.display = "flex";
+        nameInput.focus();
+    });
 
-// 2. Gestion du menu déroulant Profil
-const profileTrigger = document.getElementById("profile-trigger");
-const dropdown = document.getElementById("user-dropdown");
+    // Annuler la modification
+    cancelBtn.addEventListener("click", () => {
+        displayGroup.style.display = "flex";
+        editGroup.style.display = "none";
+    });
 
-profileTrigger.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdown.classList.toggle("show");
-});
+    // Confirmer la modification
+    confirmBtn.addEventListener("click", () => {
+        const newName = nameInput.value.trim();
+        const oldName = nameLabel.innerText;
 
-// Fermer le menu si on clique ailleurs
-window.addEventListener("click", () => {
-    dropdown.classList.remove("show");
+        if (newName !== "" && newName !== oldName) {
+            modifierNomCheval(newName); // Ta fonction fetch déjà créée
+        }
+        
+        // On repasse en mode affichage (le fetch mettra à jour le texte)
+        displayGroup.style.display = "flex";
+        editGroup.style.display = "none";
+    });
+
+    // Permettre de valider avec la touche Entrée
+    nameInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") confirmBtn.click();
+    });
 });
 
 function initStats(horse) {
@@ -68,10 +88,8 @@ function initStats(horse) {
     updateVisualBars();
 }
 
-// Nouvelle fonction pour envoyer les données au serveur
 function sauvegarderStatsBDD() {
     if (!currentHorseId) return;
-
     fetch("/api/update-horse-stats", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -94,32 +112,24 @@ function sauvegarderArgentBDD() {
 
 function setupActionButtons() {
     const slots = document.querySelectorAll('.slot');
-    
-    // Définition des prix
-    const prices = {
-        "Carotte": 10,
-        "Brosse": 10,
-        "Eau": 5,
-        "Foin": 5,
-        "Cure-pied": 20
-    };
+    const prices = { "Carotte": 10, "Brosse": 10, "Eau": 5, "Foin": 5, "Cure-pied": 20 };
 
     slots.forEach(slot => {
         slot.addEventListener('click', () => {
             const type = slot.querySelector('img').alt;
             const cout = prices[type];
+
             if (userCoins < cout) {
                 const display = document.getElementById("coin-amount");
-                display.style.color = "red"; // Le texte devient rouge
-                setTimeout(() => { display.style.color = "#3e2723"; }, 1000); // Repasse au marron après 1s
+                display.style.color = "red";
+                setTimeout(() => { display.style.color = ""; }, 1000);
                 return;
             }
 
-            // DÉDUCTION ET MISE À JOUR VISUELLE
             userCoins -= cout;
-            document.getElementById("coin-amount").innerText = userCoins;
+            // On met à jour le header via la fonction globale
+            if (typeof updateHeader === "function") updateHeader(); 
 
-            // LOGIQUE DES STATS
             if (type === "Carotte") horseStats.energie += 15;
             else if (type === "Foin") horseStats.energie += 5;
             else if (type === "Eau") { horseStats.energie += 10; horseStats.sante += 5; }
@@ -128,21 +138,13 @@ function setupActionButtons() {
             
             updateVisualBars();
             sauvegarderStatsBDD();
-            sauvegarderArgentBDD(); // Nouvelle fonction
+            sauvegarderArgentBDD();
+            //Update_Header();
         });
     });
 }
 
-function baisserStatsAutomatiquement() {
-    horseStats.energie -= 5;
-    horseStats.sante -= 5;
-    horseStats.moral -= 5;
-    updateVisualBars();
-    sauvegarderStatsBDD(); // SAUVEGARDE APRÈS LA BAISSE DES 5 MIN
-}
-
 function updateVisualBars() {
-    // On s'assure que rien ne dépasse 100 ou ne descend sous 0
     for (let s in horseStats) {
         if (horseStats[s] > 100) horseStats[s] = 100;
         if (horseStats[s] < 0) horseStats[s] = 0;
@@ -150,34 +152,41 @@ function updateVisualBars() {
     }
 }
 
-// Fonction pour la baisse toutes les 5 minutes
 function baisserStatsAutomatiquement() {
-    console.log("Les jauges baissent un peu...");
     horseStats.energie -= 5;
     horseStats.sante -= 5;
     horseStats.moral -= 5;
     updateVisualBars();
+    sauvegarderStatsBDD();
 }
 
-// Garde tes fonctions afficherEtoiles ici...
 function afficherEtoiles(elementId, count) {
     const container = document.getElementById(elementId);
-    
-    // Sécurité : si l'élément n'est pas trouvé, on ne fait rien
-    if (!container) {
-        console.warn(`Attention : l'élément avec l'ID "${elementId}" est introuvable.`);
-        return;
-    }
-
+    if (!container) return;
     let html = "";
     for (let i = 1; i <= 10; i++) {
-        if (i <= count) {
-            html += "★"; 
-        } else {
-            html += "<span class='star-empty'>☆</span>"; 
-        }
+        html += i <= count ? "★" : "<span class='star-empty'>☆</span>";
     }
     container.innerHTML = html;
+}
+
+function modifierNomCheval(nouveauNom) {
+    fetch("/api/rename-horse", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+            horseId: currentHorseId,
+            nom: nouveauNom
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById("user-horse-name").innerText = nouveauNom;
+        } else {
+            alert("Erreur lors du changement de nom.");
+        }
+    });
 }
 /*
 function remplirJaugesAleatoires() {
@@ -186,4 +195,19 @@ function remplirJaugesAleatoires() {
         document.getElementById(`bar-${stat}`).style.width = val + "%";
     });
 }
+
+// 2. Gestion du menu déroulant Profil
+const profileTrigger = document.getElementById("profile-trigger");
+const dropdown = document.getElementById("user-dropdown");
+
+profileTrigger.addEventListener("click", (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle("show");
+});
+
+// Fermer le menu si on clique ailleurs
+window.addEventListener("click", () => {
+    dropdown.classList.remove("show");
+});
+
 */
