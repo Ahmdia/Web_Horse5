@@ -7,7 +7,7 @@
     {% block extra_css %}{% endblock %}
     <title>{% block title %}Tagade Center{% endblock %}</title>
 </head>
-<body>
+<body class="{% block body_class %}{% endblock %}">
  <header id="game-header" class="large-header">
             <div class="header-main-content">
                 <div class="header-decor decoration-left">
@@ -37,10 +37,10 @@
 
             <nav class="header-nav-expanded">
                 <ul class="nav-links">
-                    <li><a href="main_page.html" class="active">🏠 Mon Centre</a></li>
-                    <li><a href="Chevaux_Users.html">🐎 Mes Chevaux</a></li>
-                    <li><a href="boutique.html">🛒 Shop</a></li>
-                    <li><a href="mini_jeu.html">🏆 Compétitions</a></li>
+                    <li><a href="/main_page" class="active">🏠 Mon Centre</a></li>
+                    <li><a href="/mes_chevaux">🐎 Mes Chevaux</a></li>
+                    <li><a href="/boutique">🛒 Shop</a></li>
+                    <li><a href="/mini_jeu">🏆 Compétitions</a></li>
                 </ul>
 
                 <div class="currency-panel">

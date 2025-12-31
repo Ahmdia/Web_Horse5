@@ -1,9 +1,3 @@
-#shop-container {
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
-    z-index: 1;
-}
 
 .shop-category-title {
     text-align: center;
@@ -19,12 +13,26 @@
 
 /* LA GRILLE : 4 colonnes par défaut, s'adapte à 3, 2 ou 1 selon l'écran */
 /* Débloquer le scroll et la structure pour la boutique uniquement */
+/* Dans Css/boutique_style.css */
+
 body.boutique-body {
-    display: block !important; /* Annule le flex du main_style.css */
-    overflow-y: auto !important; /* Réactive le scroll vertical */
-    overflow-x: hidden;
-    height: auto;
-    padding-top: 180px; /* Espace pour le header fixe */
+    display: block !important;    /* Force le mode bloc au lieu du flex */
+    overflow-y: auto !important;  /* Active le scroll vertical */
+    overflow-x: hidden !important;
+    height: auto !important;      /* Permet au body de grandir avec le contenu */
+    min-height: 100vh;
+    padding-top: 200px;           /* Espace pour le header fixe */
+    background-attachment: fixed; /* Si tu as un fond, il reste fixe au scroll */
+}
+
+/* Optionnel : Assure-toi que le container ne bloque rien */
+#shop-container {
+    position: relative;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    z-index: 1;
+    padding-bottom: 50px; /* Espace en bas de page */
 }
 
 /* Forcer la grille à 4 colonnes sur grand écran */

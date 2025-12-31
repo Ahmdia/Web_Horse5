@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("user-horse-img").style.display = "block";
                 document.getElementById("user-horse-name").innerText = horse.nom_personnalise || horse.nom;
 
+                
                 initStats(horse); 
                 const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
                 aptitudes.forEach(apt => {
@@ -33,6 +34,51 @@ document.addEventListener("DOMContentLoaded", () => {
                 userCoins = data.user.argent || 0;
             }
         });
+
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    const displayGroup = document.getElementById("name-display-group");
+    const editGroup = document.getElementById("name-edit-group");
+    const nameLabel = document.getElementById("user-horse-name");
+    const nameInput = document.getElementById("name-input");
+    
+    const editBtn = document.getElementById("edit-name-btn");
+    const confirmBtn = document.getElementById("confirm-name");
+    const cancelBtn = document.getElementById("cancel-name");
+
+    // Passer en mode édition
+    editBtn.addEventListener("click", () => {
+        nameInput.value = nameLabel.innerText;
+        displayGroup.style.display = "none";
+        editGroup.style.display = "flex";
+        nameInput.focus();
+    });
+
+    // Annuler la modification
+    cancelBtn.addEventListener("click", () => {
+        displayGroup.style.display = "flex";
+        editGroup.style.display = "none";
+    });
+
+    // Confirmer la modification
+    confirmBtn.addEventListener("click", () => {
+        const newName = nameInput.value.trim();
+        const oldName = nameLabel.innerText;
+
+        if (newName !== "" && newName !== oldName) {
+            modifierNomCheval(newName); // Ta fonction fetch déjà créée
+        }
+        
+        // On repasse en mode affichage (le fetch mettra à jour le texte)
+        displayGroup.style.display = "flex";
+        editGroup.style.display = "none";
+    });
+
+    // Permettre de valider avec la touche Entrée
+    nameInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") confirmBtn.click();
+    });
 });
 
 function initStats(horse) {
@@ -93,6 +139,7 @@ function setupActionButtons() {
             updateVisualBars();
             sauvegarderStatsBDD();
             sauvegarderArgentBDD();
+            //Update_Header();
         });
     });
 }
@@ -121,6 +168,25 @@ function afficherEtoiles(elementId, count) {
         html += i <= count ? "★" : "<span class='star-empty'>☆</span>";
     }
     container.innerHTML = html;
+}
+
+function modifierNomCheval(nouveauNom) {
+    fetch("/api/rename-horse", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+            horseId: currentHorseId,
+            nom: nouveauNom
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById("user-horse-name").innerText = nouveauNom;
+        } else {
+            alert("Erreur lors du changement de nom.");
+        }
+    });
 }
 /*
 function remplirJaugesAleatoires() {

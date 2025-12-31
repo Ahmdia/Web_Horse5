@@ -3,7 +3,7 @@ const bcrypt = require("bcryptjs");
 const session = require("express-session");
 const path = require("path");
 const mysql = require("mysql2");
-
+const nunjucks = require('nunjucks');
 // --- CONNEXION A LA BASE DE DONNÉES ---
 // --- CONNEXION A LA BASE DE DONNÉES DISTANTE ---
 const db = mysql.createConnection({
@@ -25,6 +25,7 @@ db.connect((err) => {
 const app = express();
 
 
+
 // --- MIDDLEWARES ---
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
@@ -33,24 +34,55 @@ app.use(session({
     saveUninitialized: false
 }));
 
-app.get("/main_page.html", (req, res, next) => {
-    if (!req.session.user) {
-        // Si pas de session, on renvoie à l'accueil
-        return res.redirect("/");
-    }
-    next(); // Sinon, on continue vers la page
-});
-
 const publicPath = path.join(__dirname, "..", "..");
 console.log("Dossier racine pour les ressources :", publicPath);
 app.use(express.static(publicPath));
 
+nunjucks.configure(path.join(publicPath, 'views'), { 
+    autoescape: true,
+    express: app,
+    noCache: true 
+});
+app.set('view engine', 'html');
 
 console.log("Le serveur cherche l'index ici :", path.join(__dirname, "..", "index.html"));
 // --- PAGE PRINCIPALE ---
 app.get("/", (req, res) => {
     // On utilise le même chemin pour envoyer le fichier index.html
     res.sendFile(path.join(publicPath, "index.html"));
+});
+
+// ROUTE MAIN PAGE
+app.get("/main_page", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/");
+    }
+    // ON UTILISE RENDER ! Nunjucks va compiler base.html + main_page.html
+    res.render("main_page", { 
+        user: req.session.user,
+        activePage: 'home' 
+    });
+});
+
+// ROUTE BOUTIQUE
+app.get("/boutique", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/");
+    }
+    res.render("boutique", { 
+        user: req.session.user,
+        activePage: 'shop' 
+    });
+});
+
+app.get("/mes_chevaux", (req, res) => {
+    if (!req.session.user) {
+        return res.redirect("/");
+    }
+    res.render("mes_chevaux", { 
+        user: req.session.user,
+        activePage: 'Ranch' 
+    });
 });
 
 app.post("/register", (req, res) => {
@@ -96,6 +128,7 @@ app.post("/register", (req, res) => {
         );
     });
 });
+
 // --- CONNEXION ---
 app.post("/login", (req, res) => {
     const { nom, prenom } = req.body;
@@ -114,6 +147,7 @@ app.post("/login", (req, res) => {
         res.send("OK");
     });
 });
+
 // Route pour savoir si l'utilisateur est connecté
 app.get("/api/user", (req, res) => {
     if (req.session.user) {
@@ -132,30 +166,25 @@ app.get("/logout", (req, res) => {
 // --- LANCER LE SERVEUR ---
 // On utilise le port donné par l'hébergeur, sinon le port 3000 par défaut
 //###################  Main Page ########################//
+
 app.get("/api/user-first-horse", (req, res) => {
     if (!req.session.user) return res.status(401).json({ error: "Non connecté" });
 
     const userId = req.session.user.id;
 
     // On joint la table de possession avec la table ecurie pour avoir l'image et la race
+// Dans server.js, modifier la requête de main_page
     const sql = `
-        SELECT p.*, e.chemin_image, e.vitesse, e.endurance, e.dressage, e.galop, e.trot, e.saut 
+        SELECT p.*, e.vitesse, e.endurance, e.saut, e.dressage, e.galop, e.trot, e.chemin_image, e.nom
         FROM possede_chevaux p
         JOIN ecurie e ON p.ecurie_id = e.id
         WHERE p.user_id = ?
+        ORDER BY p.actif DESC  -- Le cheval actif sera TOUJOURS le premier de la liste
         LIMIT 1`;
-
     db.query(sql, [userId], (err, rows) => {
         if (err || rows.length === 0) return res.json({ found: false });
         res.json({ found: true, horse: rows[0] });
     });
-});
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`🚀 Serveur lancé sur le port ${PORT}`);
-    if (!process.env.PORT) {
-        console.log(`Lien local : http://localhost:${PORT}`);
-    }
 });
 
 // Ajoute cette route dans server.js
@@ -183,6 +212,20 @@ app.post("/api/update-money", (req, res) => {
     });
 });
 
+app.post("/api/rename-horse", (req, res) => {
+    if (!req.session.user) return res.status(401).send("Non connecté");
+
+    const { horseId, nom } = req.body;
+    const query = "UPDATE possede_chevaux SET nom_personnalise = ? WHERE id = ? AND user_id = ?";
+
+    db.query(query, [nom, horseId, req.session.user.id], (err, result) => {
+        if (err) {
+            console.error(err);
+            return res.json({ success: false });
+        }
+        res.json({ success: true });
+    });
+});
 //###################  Boutique ########################//
 // Route pour récupérer le catalogue de l'écurie
 app.get("/api/ecurie-list", (req, res) => {
@@ -194,6 +237,97 @@ app.get("/api/ecurie-list", (req, res) => {
         }
         res.json(results);
     });
+});
+
+app.post("/api/buy-horse", (req, res) => {
+    if (!req.session.user) return res.status(401).json({ success: false, message: "Non connecté" });
+
+    const userId = req.session.user.id;
+    const { horseId, prix } = req.body;
+
+    // 1. Vérifier le solde
+    db.query("SELECT argent FROM users WHERE id = ?", [userId], (err, results) => {
+        if (err || results.length === 0) return res.status(500).json({ success: false });
+
+        const soldeActuel = results[0].argent;
+        if (soldeActuel < prix) {
+            return res.json({ success: false, message: "Fonds insuffisants !" });
+        }
+
+        // 2. Récupérer le nom par défaut du cheval dans l'écurie pour le "nom_personnalise"
+        db.query("SELECT nom FROM ecurie WHERE id = ?", [horseId], (err, horseData) => {
+            if (err || horseData.length === 0) return res.status(500).json({ success: false });
+
+            const defaultName = horseData[0].nom;
+            const nouveauSolde = soldeActuel - prix;
+
+            // 3. INSERT dans possede_chevaux (On respecte ta structure SQL)
+            // On met les jauges à 50 (moitié pleines) comme convenu
+            const insertQuery = `
+                INSERT INTO possede_chevaux 
+                (user_id, ecurie_id, nom_personnalise, energie, sante, moral) 
+                VALUES (?, ?, ?, 50, 50, 50)`;
+
+            db.query(insertQuery, [userId, horseId, defaultName], (err) => {
+                if (err) {
+                    console.error("Erreur SQL:", err.message);
+                    return res.status(500).json({ success: false, message: "Erreur lors de l'achat" });
+                }
+
+                // 4. Mettre à jour l'argent
+                db.query("UPDATE users SET argent = ? WHERE id = ?", [nouveauSolde, userId], (err) => {
+                    req.session.user.argent = nouveauSolde;
+                    res.json({ 
+                        success: true, 
+                        message: "Félicitations ! Votre nouveau compagnon a rejoint votre écurie.",
+                        nouveauSolde: nouveauSolde 
+                    });
+                });
+            });
+        });
+    });
+});
+
+//###################  Chevaux Utilisateurs ########################//
+// Lister les chevaux possédés
+app.get("/api/my-horses", (req, res) => {
+    if (!req.session.user) return res.status(401).json([]);
+    
+    const query = `
+        SELECT p.*, e.vitesse, e.endurance, e.saut, e.chemin_image, e.nom as race
+        FROM possede_chevaux p
+        JOIN ecurie e ON p.ecurie_id = e.id
+        WHERE p.user_id = ?`;
+    
+    db.query(query, [req.session.user.id], (err, results) => {
+        if (err) return res.status(500).json([]);
+        res.json(results);
+    });
+});
+
+// Changer le cheval actif
+app.post("/api/select-horse", (req, res) => {
+    const userId = req.session.user.id;
+    const { horseId } = req.body;
+
+    // 1. On met tous les chevaux de l'utilisateur à actif = 0
+    db.query("UPDATE possede_chevaux SET actif = 0 WHERE user_id = ?", [userId], (err) => {
+        if (err) return res.json({ success: false });
+
+        // 2. On met le cheval choisi à actif = 1
+        db.query("UPDATE possede_chevaux SET actif = 1 WHERE id = ? AND user_id = ?", [horseId, userId], (err) => {
+            if (err) return res.json({ success: false });
+            res.json({ success: true });
+        });
+    });
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Serveur lancé sur le port ${PORT}`);
+    if (!process.env.PORT) {
+        console.log(`Lien local : http://localhost:${PORT}`);
+    }
 });
 
 ///////AFFICHAGE DYNAMIQUE//////////////////////

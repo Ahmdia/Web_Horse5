@@ -272,6 +272,15 @@ body::before {
     to { opacity: 1; transform: translateX(0); }
 }
 
+.name-edit-container {
+    height: 80px; /* Un peu plus haut pour le titre Rye */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
 #user-horse-name {
     color: #3e2723;
     background: #f3e5ab;
@@ -284,6 +293,63 @@ body::before {
     margin-top: 15px;
 }
 
+.name-edit-container {
+    height: 60px; /* Hauteur fixe pour éviter que la page saute au changement */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#name-display-group, #name-edit-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.edit-icon {
+    width: 28px; /* Proportionnel à un titre H2 */
+    height: 28px;
+    margin-left: 15px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s ease-in-out;
+    /* Filtre pour donner un aspect "vieux bois/cuir" à l'icône noire */
+    filter: sepia(1) saturate(1.5) contrast(0.8);
+}
+
+.edit-icon:hover {
+    opacity: 1;
+    transform: scale(1.1) rotate(-10deg); /* Petit effet dynamique */
+    filter: none;
+}
+
+/* On ajuste aussi l'input pour qu'il ait la même taille que le texte remplacé */
+.ranch-input {
+    font-family: 'Rye', cursive;
+    font-size: 2.2rem;
+    height: 50px;
+    width: 300px;
+    text-align: center;
+    background: #f3e5ab;
+    border: 3px solid #4e342e;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.edit-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.control-btn {
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.control-btn:hover { transform: scale(1.3); }
+
+.check { color: #2e7d32; } /* Vert */
+.cross { color: #c62828; } /* Rouge */
 /* Fenêtre État Style Ferme */
 /* Fenêtre État Style Ferme avec Fond Amélioré */
 /* --- STYLE UNIFIÉ DES PANNEAUX RANCH --- */

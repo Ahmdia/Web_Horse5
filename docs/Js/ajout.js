@@ -125,7 +125,7 @@ if (imageComplet.startsWith("/")) {
 
     const result = await response.text();
     if (result === "Inscription réussie") {
-        window.location.href = "/main_page.html"; // Redirige vers la nouvelle page
+        window.location.href = "/main_page"; // Redirige vers la nouvelle page
     } else {
         alert(result);
     }
@@ -188,7 +188,7 @@ formLogin.addEventListener("submit", async (e) => {
 
         if (result === "OK") {
             // C'EST ICI QUE LA REDIRECTION SE FAIT
-            window.location.href = "/main_page.html";
+            window.location.href = "/main_page";
         } else {
             // Affiche l'erreur (ex: "Identifiant introuvable")
             alert(result);
