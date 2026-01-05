@@ -1,0 +1,12 @@
+# Obtenir le projet sur son espace de travail
+Prérequis: Avoir Git de pré-installée sur son PC
+    * Créer un dossier vierge et l'ouvrir dans Visual Studio Code
+    * Ouvrir un terminal de type Git et copier le projet avec la commanade
+         $ git clone <<url du projet>>"(à copier à partir de Gitlab)
+    * Initialiser le git avec "git init"
+    * Configurer son compte Git disant avec
+         $ git config --global user.name "John Doe"
+         $ git config --global user.email johndoe@example.com
+      
+
+Later
