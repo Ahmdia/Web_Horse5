@@ -22,6 +22,8 @@ cheval.addEventListener("click", () => son.play());
 // =======================
 // Charger les couleurs
 // =======================
+const colorsList = document.getElementById("colorsList");
+
 async function loadColors(raceKey) {
   const raceId = raceMap[raceKey];
   if (!raceId) return;
@@ -30,7 +32,10 @@ async function loadColors(raceKey) {
     const response = await fetch(`/api/couleurs?race_id=${raceId}`);
     const colors = await response.json();
 
-    couleurContainer.innerHTML = "";
+    // ❌ couleurContainer.innerHTML = "";
+    // ✅ seulement les couleurs
+    colorsList.innerHTML = "";
+
     const MAX = 7;
 
     for (let i = 0; i < MAX; i++) {
@@ -60,8 +65,13 @@ async function loadColors(raceKey) {
             cheval.style.backgroundImage = bgImages;
 
             // highlight
-            document.querySelectorAll(".color-circle").forEach(c => c.classList.remove("active"));
+            document.querySelectorAll(".color-circle").forEach(c =>
+              c.classList.remove("active")
+            );
             circle.classList.add("active");
+
+            // ✅ activer le bouton personnaliser
+            customBtn.disabled = false;
 
           } catch (e) {
             console.error(e);
@@ -69,7 +79,7 @@ async function loadColors(raceKey) {
         });
       }
 
-      couleurContainer.appendChild(circle);
+      colorsList.appendChild(circle);
     }
 
   } catch (err) {
@@ -154,10 +164,24 @@ formLogin.addEventListener("submit", async (e) => {
 // =======================
 // Clic sur une race
 // =======================
-document.querySelectorAll("#races h2").forEach(h2 => {
+/*document.querySelectorAll("#races h2").forEach(h2 => {
   h2.addEventListener("click", () => {
     son.play();
     loadColors(h2.id);
+  });
+});*/
+document.querySelectorAll("#races h2").forEach(h2 => {
+  h2.addEventListener("click", () => {
+    son.play();
+
+    selectedRace = h2.id; // ✅ LA LIGNE CLÉ
+    console.log("Race sélectionnée :", selectedRace);
+
+    loadColors(h2.id);
+
+    customBtn.disabled = false;
+
+  resetSelectedLayers();
   });
 });
 
@@ -256,3 +280,137 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+
+
+
+
+
+
+// ===============================
+// ÉTAT DES COUCHES SÉLECTIONNÉES
+// ===============================
+const selectedLayers = {
+  forelock: null,
+  mane: null,
+  tail: null,
+  body: null,
+  shadow: "./Nouveau/shadow.png" // shadow toujours présent
+};
+
+// ===============================
+// ÉLÉMENTS DOM
+// ===============================
+const customCheval = document.getElementById("customCheval");
+const customBtn = document.getElementById("customBtn");
+const customModal = document.getElementById("customModal");
+const closeCustomModal = document.getElementById("closeCustomModal");
+const customImagesContainer = document.getElementById("customImages");
+
+// ===============================
+// MISE À JOUR DU CHEVAL (layers)
+// ===============================
+function updateCheval() {
+  const layers = [
+    selectedLayers.forelock,
+    selectedLayers.mane,
+    selectedLayers.tail,
+    selectedLayers.body,
+    selectedLayers.shadow
+  ].filter(Boolean);
+
+  const bg = layers.length ? layers.map(l => `url('${l}')`).join(", ") : "none";
+
+  // Mettre à jour le cheval principal et l'aperçu dans la modale
+  cheval.style.backgroundImage = bg;
+  customCheval.style.backgroundImage = bg;
+}
+
+// ===============================
+// RESET DES COUCHES
+// ===============================
+function resetSelectedLayers() {
+  selectedLayers.forelock = null;
+  selectedLayers.mane = null;
+  selectedLayers.tail = null;
+  selectedLayers.body = null;
+  // shadow reste toujours présent
+
+  // Réinitialiser visuellement l'aperçu
+  customCheval.style.backgroundImage = "none";
+}
+
+// ===============================
+// OUVERTURE MODALE PERSONNALISATION
+// ===============================
+customBtn.addEventListener("click", async () => {
+  if (!selectedRace) {
+    alert("Choisis d'abord une race");
+    return;
+  }
+
+  // Reset avant ouverture
+  resetSelectedLayers();
+  customImagesContainer.innerHTML = "";
+
+  // Créer le message d'erreur si pas déjà présent
+  let errorMsg = document.getElementById("modalErrorMsg");
+  if (!errorMsg) {
+    errorMsg = document.createElement("p");
+    errorMsg.id = "modalErrorMsg";
+    errorMsg.style.color = "red";
+    errorMsg.style.marginTop = "10px";
+    errorMsg.style.display = "none";
+    customModal.querySelector(".box_formulaire_style").appendChild(errorMsg);
+  }
+
+  // Ouvrir modale
+  customModal.style.display = "flex";
+
+  try {
+    const res = await fetch(`/api/chevaux_personnalisation?race=${selectedRace}`);
+    const images = await res.json();
+
+    images.forEach(imgData => {
+      const img = document.createElement("img");
+      img.src = imgData.image_path;
+      img.alt = imgData.couche;
+      img.style.width = "100px";
+      img.style.margin = "6px";
+      img.style.cursor = "pointer";
+
+      img.addEventListener("click", () => {
+        selectedLayers[imgData.couche] = imgData.image_path;
+        updateCheval();
+
+        // Si toutes les couches obligatoires sont choisies, cacher le message
+        if (selectedLayers.body && selectedLayers.mane && selectedLayers.tail && selectedLayers.forelock) {
+          errorMsg.style.display = "none";
+        }
+      });
+
+      customImagesContainer.appendChild(img);
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("Erreur lors du chargement des images");
+  }
+});
+
+// ===============================
+// FERMETURE MODALE
+// ===============================
+closeCustomModal.addEventListener("click", () => {
+  // Vérifier si toutes les pièces obligatoires sont choisies
+  if (!selectedLayers.body || !selectedLayers.mane || !selectedLayers.tail || !selectedLayers.forelock) {
+    const errorMsg = document.getElementById("modalErrorMsg");
+    if (errorMsg) {
+      errorMsg.textContent = "Tu dois sélectionner toutes les parties : body, mane, tail et forelock ";
+      errorMsg.style.display = "block";
+    }
+    return; // ne ferme pas la modale
+  }
+
+  // Si tout est sélectionné, fermer modale
+  customModal.style.display = "none";
+});
