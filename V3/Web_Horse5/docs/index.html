@@ -20,7 +20,7 @@
     <!-- Conteneur fixe pour la personne et la bulle -->
     <div class="bubble-container" id="bubbleContainer">
       <!-- Personne -->
-      <img src="Img/Decor/personnes.png" alt="Personne" class="person-img" id="personImg">
+      <img src="Img/Decor/personne.png" alt="Personne" class="person-img" id="personImg">
 
       <!-- Bulle centrée verticalement par rapport à la personne -->
       <div class="speech-bubble" id="speechBubble">
@@ -49,6 +49,7 @@
       <div id="box_cheval">
         <div id="fairy-container"></div>
         <figure id="cheval" style="background-image: url(''), url(''), url(''), url('./Nouveau/gr-c3.png'), url('./Nouveau/shadow.png');"></figure>
+
       </div>
 
       <!-- Son du cheval -->
@@ -61,11 +62,15 @@
 
       <!-- Bouton créer compte -->
   <button id="valider-btn">Créer un compte</button>
+
  <!-- <button id="login-btn">Se connecter</button>-->
 
       <!-- Conteneur des couleurs dynamiques -->
       <div class="couleur" id="couleur-container">
-        <h1>couleurs</h1>
+  <div id="colorsList"></div>
+
+  <!-- bouton fixe -->
+  <button id="customBtn" class="btn-custom" disabled>Personnaliser</button>
 
 
 
@@ -152,5 +157,29 @@
         });
       </script>
     </div>
+<div id="customModal" class="modal-style">
+  <div class="box_formulaire_style custom-layout">
+
+    <span id="closeCustomModal" class="close_btn">&times;</span>
+    <h2>Personnaliser mon cheval</h2>
+
+    <div class="custom-content">
+
+      <!-- PREVIEW CHEVAL -->
+      <div class="custom-preview">
+        <figure id="customCheval"></figure>
+      </div>
+
+      <!-- LISTE DES IMAGES -->
+      <div id="customImages" class="custom-images-container"></div>
+
+    </div>
+
+  </div>
+</div>
+
+
+  </div>
+</div>
   </body>
 </html>
