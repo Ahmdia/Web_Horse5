@@ -64,6 +64,7 @@ app.get("/main_page", (req, res) => {
     });
 });
 
+
 // ROUTE BOUTIQUE
 app.get("/boutique", (req, res) => {
     if (!req.session.user) {
@@ -128,6 +129,38 @@ app.post("/register", (req, res) => {
         );
     });
 });
+
+// PAGE ENTRAINEMENT
+app.get("/entrainement", (req, res) => {
+    if (!req.session.user) return res.redirect("/");
+    res.render("entrainement", { user: req.session.user });
+});
+
+// API pour mettre à jour stats après entraînement
+app.post("/api/entrainement", (req, res) => {
+    if (!req.session.user) return res.status(401).send("Non connecté");
+
+    const { horseId, energie, sante, moral } = req.body;
+
+    const sql = `UPDATE possede_chevaux SET energie = ?, sante = ?, moral = ? WHERE id = ? AND user_id = ?`;
+
+    db.query(sql, [energie, sante, moral, horseId, req.session.user.id], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Erreur lors de la mise à jour du cheval");
+        }
+        res.json({ success: true });
+    });
+});
+
+app.get("/mini_jeu", (req, res) => {
+    if (!req.session.user) return res.redirect("/");
+    res.render("mini_jeu", { user: req.session.user });
+});
+
+
+
+
 
 // --- CONNEXION ---
 app.post("/login", (req, res) => {

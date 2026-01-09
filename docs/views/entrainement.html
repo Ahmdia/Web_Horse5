@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block body_class %}training-body{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="Css/entrainement_style.css">
+{% endblock %}
+
+{% block content %}
+<main id="training-container">
+    <h2>🏋️ Entraînements disponibles</h2>
+    <p>Choisis une discipline pour entraîner ton cheval et améliorer ses aptitudes !</p>
+
+    <div class="training-grid">
+        <div class="training-card" data-discipline="cso">
+            <div class="card-icon">🐎</div>
+            <div class="card-title">CSO</div>
+            <div class="card-desc">Saut d’obstacles – Énergie -10, Moral -5</div>
+        </div>
+
+        <div class="training-card" data-discipline="dressage">
+            <div class="card-icon">🎭</div>
+            <div class="card-title">Dressage</div>
+            <div class="card-desc">Dressage – Énergie -8, Moral -3</div>
+        </div>
+
+        <div class="training-card" data-discipline="longe">
+            <div class="card-icon">⛰️</div>
+            <div class="card-title">Longe</div>
+            <div class="card-desc">Endurance – Énergie -5, Moral +2</div>
+        </div>
+
+        <div class="training-card" data-discipline="balade">
+            <div class="card-icon">🌳</div>
+            <div class="card-title">Balade</div>
+            <div class="card-desc">Relaxation – Énergie -3, Moral +5</div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="Js/entrainement.js"></script>
+{% endblock %}
+
+
+
+
+
+
