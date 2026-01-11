@@ -1,0 +1,462 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+/*****************************************EN-TETE*******************************************/
+/* --- HEADER LARGE ET STYLE --- */
+/*****************************************EN-TETE*******************************************/
+#game-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background: #f3e5ab url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+    border-bottom: 6px double #4e342e;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+}
+
+/* Style spécifique pour l'image du logo dans l'en-tête */
+.header-logo {
+    height: 90px; /* Ajuste la taille selon tes besoins */
+    width: auto;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3)); /* Donne du relief */
+    transition: transform 0.3s ease;
+}
+
+.header-logo:hover {
+    transform: scale(1.05) rotate(-5deg); /* Petit effet sympa au survol */
+}
+
+/* On s'assure que le conteneur décor ne bloque pas le centrage */
+.decoration-left {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 150px; /* Largeur fixe pour équilibrer avec le côté droit */
+}
+.header-main-content {
+    display: flex;
+    justify-content: space-between; /* Espace entre décor, titre et profil */
+    align-items: center;
+    padding: 10px 50px;
+    height: 120px; 
+}
+
+.title-container {
+    text-align: center;
+    flex-grow: 1; /* Permet au titre de prendre toute la place centrale */
+}
+
+.game-title {
+    font-family: 'Rye', cursive;
+    font-size: 4rem; /* Encore plus grand */
+    color: #3e2723;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-shadow: 3px 3px 0px rgba(0,0,0,0.1);
+}
+
+.title-underline {
+    height: 4px;
+    background: linear-gradient(90deg, transparent, #4e342e, transparent);
+    width: 60%;
+    margin: 0 auto;
+}
+
+/* ZONE UTILISATEUR ET PROFIL */
+.user-area {
+    display: flex;
+    align-items: center;
+}
+
+.user-info-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(78, 52, 46, 0.1);
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 2px solid #4e342e;
+}
+
+.profile-container {
+    position: relative;
+}
+
+.profile-circle {
+    width: 55px;
+    height: 55px;
+    background: #4e342e;
+    border-radius: 50%;
+    border: 3px solid #d4af37;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.profile-circle img {
+    width: 30px;
+    filter: invert(1);
+}
+
+/* NAVIGATION BASSE */
+.header-nav-expanded {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 60px;
+    background: #3e2723; /* Marron très foncé pour le contraste */
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links a {
+    color: #f3e5ab;
+    text-decoration: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1rem;
+    transition: 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+    color: #d4af37;
+}
+
+/* PANNEAU MONNAIE */
+.currency-panel {
+    background: #d4af37;
+    padding: 5px 20px;
+    border-radius: 20px;
+    border: 2px solid #4e342e;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: bold;
+}
+
+.coin-img {
+    width: 25px;
+}
+
+#coin-amount { font-weight: bold; color: #4e342e; }
+.coin-icon { width: 20px; height: 20px; }
+
+
+/*****************************************CORPS DU MAIN*******************************************/
+body {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    padding-top: 180px; /* Pour ne pas être sous le header */
+    align-items: flex-start; /* On commence sous le header */
+    overflow: hidden; /* Empêche le scroll si le flou déborde */
+}
+
+/* LE FOND FLOUTÉ */
+body::before {
+    content: "";
+    position: fixed; /* Reste fixe lors du scroll */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("../Img/Decor/main_2.jpg"); /* Ton image */
+    background-size: cover;
+    background-position: center;
+    /*filter: blur(8px); /* Ajuste le flou ici (8px est un bon début) */
+    transform: scale(1.1); /* Zoom léger pour éviter les bords blancs dus au flou */
+    z-index: -1; /* Place le fond derrière le contenu */
+}
+
+
+#main-container {
+    display: flex;
+    width: 90vw;
+    height: 80vh;
+    align-items: flex-end;
+    justify-content: flex-start;
+    z-index: 1; /* Pour être au dessus du fond flouté */
+    flex-direction: row;
+}
+
+/* Conteneur parent pour positionner les slots par rapport au cheval */
+#horse-display-zone {
+    position: relative; /* Important pour le placement des slots */
+    flex: 0 0 75%;
+    text-align: -webkit-center;
+}
+
+.action-slots {
+    position: absolute;
+    top: 10%;    /* Ajuste selon la hauteur du cheval */
+    left: 80%;   /* Positionne à droite de l'image */
+    width: 200px;
+    height: 300px;
+    pointer-events: none; /* Permet de cliquer sur le cheval derrière si besoin */
+}
+.slot {
+    pointer-events: auto;
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.4);
+    border: 2px solid #9e9e9e;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    
+    /* CURSEUR MICRO-MAIN */
+    cursor: pointer; 
+
+    /* Ta nouvelle position */
+    transform: translate(
+        calc(cos(var(--i) * 15deg) * 90px), 
+        calc(sin(var(--i) * 10deg) * 375px)
+    );
+}
+.icon-item {
+    width: 100%;  /* L'image prend 70% de la place du cercle */
+    height: 100%;
+    object-fit: contain; /* Garde les proportions de l'image */
+    pointer-events: none; /* L'image ne bloque pas le clic sur le slot */
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); /* Donne un peu de relief aux objets */
+}
+
+/* Optionnel : un petit effet d'échelle sur l'icône quand on survole le slot */
+.slot:hover .icon-item {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+       background: rgba(255, 255, 255, 0.6); /* Devient un peu plus opaque */
+    border-color: #ffffff;               /* Le bord devient blanc brillant */
+}
+
+/*
+.slot:hover {
+    background: rgba(255, 255, 255, 0.7);
+    border-color: #d4af37; /* Or au survol *
+    transform: scale(1.1) translate(
+        calc(cos(var(--i) * 30deg) * 65px), 
+        calc(sin(var(--i) * 35deg) * 125px)
+    );
+}
+*/
+#user-horse-img {
+    width: 100%;
+    max-width: 650px;
+    height: auto;
+    /* Petit effet d'ombre pour détacher le cheval du fond flou */
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    animation: fadeInHorse 1.5s ease-out;
+}
+
+@keyframes fadeInHorse {
+    from { opacity: 0; transform: translateX(-50px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+.name-edit-container {
+    height: 80px; /* Un peu plus haut pour le titre Rye */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+#user-horse-name {
+    color: #3e2723;
+    background: #f3e5ab;
+    padding: 5px 20px;
+    border: 3px solid #4e342e;
+    border-radius: 20px;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: inline-block;
+    margin-top: 15px;
+}
+
+.name-edit-container {
+    height: 60px; /* Hauteur fixe pour éviter que la page saute au changement */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#name-display-group, #name-edit-group {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.edit-icon {
+    width: 28px; /* Proportionnel à un titre H2 */
+    height: 28px;
+    margin-left: 15px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s ease-in-out;
+    /* Filtre pour donner un aspect "vieux bois/cuir" à l'icône noire */
+    filter: sepia(1) saturate(1.5) contrast(0.8);
+}
+
+.edit-icon:hover {
+    opacity: 1;
+    transform: scale(1.1) rotate(-10deg); /* Petit effet dynamique */
+    filter: none;
+}
+
+/* On ajuste aussi l'input pour qu'il ait la même taille que le texte remplacé */
+.ranch-input {
+    font-family: 'Rye', cursive;
+    font-size: 2.2rem;
+    height: 50px;
+    width: 300px;
+    text-align: center;
+    background: #f3e5ab;
+    border: 3px solid #4e342e;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.edit-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.control-btn {
+    cursor: pointer;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: transform 0.2s;
+}
+
+.control-btn:hover { transform: scale(1.3); }
+
+.check { color: #2e7d32; } /* Vert */
+.cross { color: #c62828; } /* Rouge */
+/* Fenêtre État Style Ferme */
+/* Fenêtre État Style Ferme avec Fond Amélioré */
+/* --- STYLE UNIFIÉ DES PANNEAUX RANCH --- */
+
+/* Conteneur pour aligner les deux fenêtres sous le cheval */
+#panels-container {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+    justify-content: space-evenly;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.ranch-panel {
+    background-color: #f3e5ab;
+    background-image: linear-gradient(rgba(93, 64, 55, 0.1), rgba(93, 64, 55, 0.1)), 
+                      url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+    border: 5px solid #4e342e; /* Bordure "bois" */
+    border-radius: 8px;
+    padding: 15px;
+    width: 250px; /* Largeur équilibrée pour en mettre deux côte à côte */
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6), inset 0 0 10px rgba(62, 39, 35, 0.2);
+    color: #3e2723;
+    font-family: 'Verdana', sans-serif;
+}
+
+.ranch-panel h3 {
+    margin: 0 0 12px 0;
+    font-size: 1rem;
+    text-align: center;
+    text-transform: uppercase;
+    border-bottom: 2px ridge #8d6e63;
+    padding-bottom: 5px;
+}
+
+/* --- ÉLÉMENTS INTERNES (Jauges et Étoiles) --- */
+
+.stat-row, .char-row {
+    background: rgba(255, 255, 255, 0.3);
+    padding: 6px 10px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(141, 110, 99, 0.1);
+}
+
+.stat-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.char-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Jauges */
+.progress-bar {
+    background: #2d1b15;
+    border-radius: 20px;
+    height: 12px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Effet rebond sympa */
+}
+
+/* Étoiles */
+/* Étoiles version classique */
+.stars-container {
+    color: #d4af37; /* Couleur Or */
+    letter-spacing: 2px;
+    font-size: 1rem;
+    white-space: nowrap;
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.1);
+}
+
+.star-empty {
+    color: rgba(62, 39, 35, 0.2); /* Brun très clair pour les étoiles vides */
+}
+
+/* Couleurs des barres */
+#bar-energie { background: #ffd54f; }
+#bar-sante { background: #81c784; }
+#bar-moral { background: #64b5f6; }
+
+@media (max-width: 1000px) {
+    #panels-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    #horse-display-zone {
+        flex: 0 0 100%;
+    }
+}
+
+
