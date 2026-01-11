@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+      <div id="main-container">
+        <div id="horse-display-zone">
+            <div id="customCheval"></div>
+
+            <div class="action-slots">
+                <div class="slot" style="--i:0">
+                    <img src="Img/Icons/carrot.png" alt="Carotte" class="icon-item">
+                </div>
+                <div class="slot" style="--i:1">
+                    <img src="Img/Icons/hay.png" alt="Foin" class="icon-item">
+                </div>
+                <div class="slot" style="--i:2">
+                    <img src="Img/Icons/brush.png" alt="Brosse" class="icon-item">
+                </div>
+                <div class="slot" style="--i:3">
+                    <img src="Img/Icons/water.png" alt="Eau" class="icon-item">
+                </div>
+                <div class="slot" style="--i:4">
+                    <img src="Img/Icons/hoof-pick2.png" alt="Cure-pied" class="icon-item">
+                </div>
+            </div>
+            <div class="name-edit-container">
+                <div id="name-display-group">
+                    <h2 id="user-horse-name"></h2>
+                    <img src="Img/Icons/pencil.png" id="edit-name-btn" class="edit-icon" title="Modifier le nom">
+                </div>
+
+                <div id="name-edit-group" style="display: none;">
+                    <input type="text" id="name-input" class="ranch-input">
+                    <div class="edit-controls">
+                        <span id="confirm-name" class="control-btn check" title="Valider">✔</span>
+                        <span id="cancel-name" class="control-btn cross" title="Annuler">✖</span>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+         <div id="panels-container">
+                <div id="etat-modal" class="ranch-panel">
+                    <h3>📊 État</h3>
+                    <div class="stat-row">
+                        <span class="stat-label">⚡ Énergie</span>
+                        <div class="progress-bar"><div id="bar-energie" class="progress-fill"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">❤️ Santé</span>
+                        <div class="progress-bar"><div id="bar-sante" class="progress-fill"></div></div>
+                    </div>
+                    <div class="stat-row">
+                        <span class="stat-label">🌟 Moral</span>
+                        <div class="progress-bar"><div id="bar-moral" class="progress-fill"></div></div>
+                    </div>
+                </div>
+
+                <div id="stats-modal" class="ranch-panel">
+                    <h3>📜 Aptitudes</h3>
+                    <div class="char-row"><span>🏃 Vitesse</span><div id="star-vitesse" class="stars-container"></div></div>
+                    <div class="char-row"><span>⛰️ Endurance</span><div id="star-endurance" class="stars-container"></div></div>
+                    <div class="char-row"><span>🎭 Dressage</span><div id="star-dressage" class="stars-container"></div></div>
+                    <div class="char-row"><span>🐎 Galop</span><div id="star-galop" class="stars-container"></div></div>
+                    <div class="char-row"><span>🚜 Trot</span><div id="star-trot" class="stars-container"></div></div>
+                    <div class="char-row"><span>🦘 Saut</span><div id="star-saut" class="stars-container"></div></div>
+                </div>
+            </div>
+    </div>
+{% endblock %}
+{% block extra_js %}
+<script src="Js/main_page.js"></script>
+{% endblock %}
