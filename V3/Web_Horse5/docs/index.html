@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Chevaux de test</title>
+    <link rel="icon" type="image/png" href="Img/jumping-horse-silhouette-facing-left-side-view.png"> 
+    <link rel="stylesheet" href="Css/style.css">
+    <link rel="stylesheet" href="Css/formulaire.css">
+  </head>
+
+
+    
+
+  <body>
+    
+    <div id="main-container">
+        <div id="overlay"></div>
+
+    <!-- Bulle centrée -->
+    <!-- Conteneur fixe pour la personne et la bulle -->
+    <div class="bubble-container" id="bubbleContainer">
+      <!-- Personne -->
+      <img src="Img/Decor/personne.png" alt="Personne" class="person-img" id="personImg">
+
+      <!-- Bulle centrée verticalement par rapport à la personne -->
+      <div class="speech-bubble" id="speechBubble">
+        <p id="bubbleText"></p>
+        <button id="nextBtn">Suivant</button>
+      </div>
+    </div>
+
+      <!-- Statut utilisateur -->
+      <div id="user-status" style="text-align: right; padding: 10px; color: white;"></div>
+      <div id="choix-zone">
+
+      <!-- Liste des races -->
+      <div id="races">
+        <h1>Races</h1>
+        <h2 id="camargue">Camargue</h2>
+        <h2 id="pur_sang_anglais">Pur-Sang Anglais</h2>
+        <h2 id="selle_francais">Selle Français</h2>
+        <h2 id="fjord">Fjord</h2>
+        <h2 id="trotteur_francais">Trotteur Français</h2>
+        <h2 id="welsh">Welsh</h2>
+        <h2 id="akhal_teke">Akhal-Téké</h2>
+      </div>
+
+      <!-- Box cheval -->
+      <div id="box_cheval">
+        <div id="fairy-container"></div>
+        <figure id="cheval" style="background-image: url(''), url(''), url(''), url('./Nouveau/gr-c3.png'), url('./Nouveau/shadow.png');"></figure>
+
+      </div>
+
+      <!-- Son du cheval -->
+      <audio id="son">
+        <source src="Sound/horse-neigh-261131.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="son_baguette_magique">
+        <source src="Sound/charming-twinkle-sound-for-fantasy-and-magic-250240.mp3" type="audio/mpeg" />
+      </audio>
+
+      <!-- Bouton créer compte -->
+  <button id="valider-btn">Créer un compte</button>
+
+ <!-- <button id="login-btn">Se connecter</button>-->
+
+      <!-- Conteneur des couleurs dynamiques -->
+      <div class="couleur" id="couleur-container">
+  <div id="colorsList"></div>
+
+  <!-- bouton fixe -->
+  <button id="customBtn" class="btn-custom" disabled>Personnaliser</button>
+
+
+
+      </div>
+    </div>
+      <!-- MODALE FORMULAIRE -->
+      <div id="modal">
+        <div id="box_formulaire">
+          <span id="close_btn">&times;</span>
+
+          <h2>Informations du cavalier</h2>
+
+          <form id="formulaire_cheval" action="/register" method="POST">
+            <div class="data">
+              <label for="nom">Identifiant :</label>
+              <input type="text" id="nom" name="nom" required>
+            </div>
+
+            <div class="data">
+              <label for="prenom">Nom de cheval :</label>
+              <input type="text" id="prenom" name="prenom" required>
+            </div>
+
+            <div class="data">
+              <label for="date_naissance">Date de naissance :</label>
+              <input type="date" id="date_naissance" name="date_naissance" required>
+            </div>
+
+            <div class="data">
+              <label>Sexe :</label>
+              <div class="radio-group">
+                <label><input type="radio" name="sexe" value="femme" required> Femme</label>
+                <label><input type="radio" name="sexe" value="homme" required> Homme</label>
+              </div>
+            </div>
+
+            <button type="submit">Valider</button>
+          </form>
+        </div>
+      </div>
+
+        <div id="modal-login" class="modal-style"> <div id="box_formulaire_login" class="box_formulaire_style">
+            <span id="close_login_btn" class="close_btn">&times;</span>
+
+            <h2>Connexion au Ranch</h2>
+
+            <form id="formulaire_login">
+              <div class="data">
+                <label for="login_nom">Identifiant :</label>
+                <input type="text" id="login_nom" name="nom" required>
+              </div>
+
+              <div class="data">
+                <label for="login_prenom">Nom de cheval (Mot de passe) :</label>
+                <input type="password" id="login_prenom" name="prenom" required>
+              </div>
+
+              <button type="submit">Entrer dans l'écurie</button>
+            </form>
+          </div>
+        </div>
+
+      <!-- Scripts -->
+      <script src="Js/ajout.js" defer></script>
+      <script src="Js/cheval.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+      <script>
+        const fairy = lottie.loadAnimation({
+          container: document.getElementById('fairy-container'),
+          renderer: 'svg',
+          loop: false,
+          autoplay: true,
+          path: 'Json/baguette_magique.json'
+        });
+
+        fairy.addEventListener('complete', () => {
+          const cheval = document.getElementById('cheval');
+          const fairyContainer = document.getElementById('fairy-container');
+          cheval.style.opacity = 1;
+          fairyContainer.style.opacity = 0;
+          setTimeout(() => {
+            fairyContainer.style.display = 'none';
+          }, 1000);
+        });
+      </script>
+    </div>
+<div id="customModal" class="modal-style">
+  <div class="box_formulaire_style custom-layout">
+
+    <span id="closeCustomModal" class="close_btn">&times;</span>
+    <h2>Personnaliser mon cheval</h2>
+
+    <div class="custom-content">
+
+      <!-- PREVIEW CHEVAL -->
+      <div class="custom-preview">
+        <figure id="customCheval"></figure>
+      </div>
+
+      <!-- LISTE DES IMAGES -->
+      <div id="customImages" class="custom-images-container"></div>
+
+    </div>
+
+  </div>
+</div>
+
+
+  </div>
+</div>
+  </body>
+</html>
