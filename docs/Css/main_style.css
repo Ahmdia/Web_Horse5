@@ -14,9 +14,11 @@ html, body {
     left: 0;
     width: 100%;
     z-index: 1000;
+
     background: #f3e5ab url('https://www.transparenttextures.com/patterns/paper-fibers.png');
     border-bottom: 6px double #4e342e;
     box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+
     display: flex;
     flex-direction: column;
 }
@@ -45,7 +47,9 @@ html, body {
     justify-content: space-between; /* Espace entre décor, titre et profil */
     align-items: center;
     padding: 10px 50px;
-    height: 120px; 
+        min-height: 100px;
+
+      height: auto; 
 }
 
 .title-container {
@@ -55,7 +59,7 @@ html, body {
 
 .game-title {
     font-family: 'Rye', cursive;
-    font-size: 4rem; /* Encore plus grand */
+    font-size: clamp(2rem, 4vw, 4rem);
     color: #3e2723;
     margin: 0;
     text-transform: uppercase;
@@ -69,6 +73,22 @@ html, body {
     width: 60%;
     margin: 0 auto;
 }
+@media (max-width: 900px) {
+    .header-main-content {
+        flex-direction: column;
+        padding: 10px 20px;
+    }
+
+    .decoration-left {
+        min-width: unset;
+    }
+
+    .game-title {
+        font-size: 2.2rem;
+        letter-spacing: 2px;
+    }
+}
+
 
 /* ZONE UTILISATEUR ET PROFIL */
 .user-area {
@@ -161,53 +181,64 @@ html, body {
 body {
     position: relative;
     display: flex;
+        margin: 0;
+
     justify-content: center;
     padding-top: 180px; /* Pour ne pas être sous le header */
     align-items: flex-start; /* On commence sous le header */
     overflow: hidden; /* Empêche le scroll si le flou déborde */
+        overflow-y: auto;   /* SCROLL AUTORISÉ */
+
 }
 
 /* LE FOND FLOUTÉ */
 body::before {
-    content: "";
-    position: fixed; /* Reste fixe lors du scroll */
+    content: ""; /* Obligatoire pour qu'il s'affiche */
+    position: absolute; /* Change fixed -> absolute */
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-image: url("../Img/Decor/main_2.jpg"); /* Ton image */
+    background-image: url("../Img/Decor/ecurie3.jpeg");
     background-size: cover;
     background-position: center;
-    /*filter: blur(8px); /* Ajuste le flou ici (8px est un bon début) */
-    transform: scale(1.1); /* Zoom léger pour éviter les bords blancs dus au flou */
-    z-index: -1; /* Place le fond derrière le contenu */
+    transform: scale(1.1);
+    z-index: -1; /* derrière tout le contenu */
 }
 
-
 #main-container {
+    position: relative;
     display: flex;
+    min-height: calc(100vh - 180px);
+    height: auto;
     width: 90vw;
-    height: 80vh;
     align-items: flex-end;
     justify-content: flex-start;
-    z-index: 1; /* Pour être au dessus du fond flouté */
+    z-index: 10; /* Pour être au dessus du fond flouté */
     flex-direction: row;
 }
 
 /* Conteneur parent pour positionner les slots par rapport au cheval */
 #horse-display-zone {
-    position: relative; /* Important pour le placement des slots */
+    display: grid; /* Grille uniquement, pas de flex */
+    grid-template-columns: auto 300px; /* 1fr = slots à gauche, 300px = cheval à droite */
+    grid-template-rows: auto auto;    /* 2 lignes : cheval/slots sur 1ère ligne, nom sur 2ème ligne */
+    gap: 20px;                        /* espace entre colonnes et lignes */
+    justify-items: center;             /* centre horizontalement chaque cellule */
+    align-items: center;               /* centre verticalement */
     flex: 0 0 75%;
-    text-align: -webkit-center;
+    z-index: 20;
+    position: relative;
 }
-
 .action-slots {
-    position: absolute;
-    top: 10%;    /* Ajuste selon la hauteur du cheval */
-    left: 80%;   /* Positionne à droite de l'image */
-    width: 200px;
+    grid-column: 1 / 2; /* colonne gauche */
+    grid-row: 1 / 2;    /* première ligne */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    width: 50px;
     height: 300px;
-    pointer-events: none; /* Permet de cliquer sur le cheval derrière si besoin */
 }
 .slot {
     pointer-events: auto;
@@ -221,6 +252,7 @@ body::before {
     justify-content: center;
     align-items: center;
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    
     transition: all 0.3s ease;
     
     /* CURSEUR MICRO-MAIN */
@@ -231,6 +263,7 @@ body::before {
         calc(cos(var(--i) * 15deg) * 90px), 
         calc(sin(var(--i) * 10deg) * 375px)
     );
+        z-index: 6;
 }
 .icon-item {
     width: 100%;  /* L'image prend 70% de la place du cercle */
@@ -259,12 +292,16 @@ body::before {
 }
 */
 #user-horse-img {
+        position: relative;
+
     width: 100%;
     max-width: 650px;
     height: auto;
     /* Petit effet d'ombre pour détacher le cheval du fond flou */
     filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
     animation: fadeInHorse 1.5s ease-out;
+        z-index: 1;
+
 }
 
 @keyframes fadeInHorse {
@@ -273,7 +310,9 @@ body::before {
 }
 
 .name-edit-container {
-    height: 80px; /* Un peu plus haut pour le titre Rye */
+    grid-column: 2 / 3; /* sous le cheval, même colonne */
+    grid-row: 2 / 3;    /* deuxième ligne */
+    height: 80px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -304,6 +343,10 @@ body::before {
     display: flex;
     align-items: center;
     gap: 15px;
+        width: 350px;        /* ⬅ largeur de la case */
+    height: 60px;     
+    margin-right: 310px; /* Décale les slots vers la droite */
+
 }
 .edit-icon {
     width: 28px; /* Proportionnel à un titre H2 */
@@ -357,12 +400,16 @@ body::before {
 /* Conteneur pour aligner les deux fenêtres sous le cheval */
 #panels-container {
     display: flex;
+    position: relative;
+
     gap: 15px;
     margin-top: 15px;
     justify-content: space-evenly;
     flex-direction: column;
     align-items: center;
     width: 100%;
+        z-index: 30;
+
 }
 
 .ranch-panel {
@@ -460,3 +507,29 @@ body::before {
 }
 
 
+
+
+
+
+#customCheval {
+    grid-column: 2 / 3; /* colonne droite */
+    grid-row: 1 / 2;    /* première ligne */
+    width: 300px;
+    height: 300px;
+    position: relative;
+    z-index: 2;
+    margin-right: 310px; /* Décale les slots vers la droite */
+
+}
+#customCheval .horse-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    pointer-events: none;
+        z-index: 3;
+
+}
+.horse-layer.saddle { z-index: 4; }
+.horse-layer.armor { z-index: 5; }

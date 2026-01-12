@@ -3,39 +3,43 @@ let userCoins = 0; // On le garde pour la vérification locale
 let currentHorseId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Charger le cheval
     fetch("/api/user-first-horse")
         .then(res => res.json())
         .then(data => {
-            if (data.found) {
-                const horse = data.horse;
-                currentHorseId = horse.id;
-                document.getElementById("user-horse-img").src = horse.chemin_image;
-                document.getElementById("user-horse-img").style.display = "block";
-                document.getElementById("user-horse-name").innerText = horse.nom_personnalise || horse.nom;
+            if (!data.found) return;
 
-                
-                initStats(horse); 
-                const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
-                aptitudes.forEach(apt => {
-                    afficherEtoiles(`star-${apt}`, Math.round(horse[apt] / 10));
-                });
+            const horse = data.horse;
+            currentHorseId = horse.id;
 
-                setupActionButtons();
-                setInterval(baisserStatsAutomatiquement, 300000);
-            }
+            // 🔥 AFFICHAGE DES IMAGES
+            const container = document.getElementById("customCheval");
+            container.innerHTML = "";
+
+            horse.images.forEach(layer => {
+                const img = document.createElement("img");
+                img.src = layer.src;
+                img.alt = layer.couche;
+                img.classList.add("horse-layer");
+                img.style.zIndex = layer.order;
+                container.appendChild(img);
+            });
+
+            // 📝 Nom
+            document.getElementById("user-horse-name").innerText =
+                horse.nom_personnalise || horse.race;
+
+            // ⭐ Stats
+            initStats(horse);
+            const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
+            aptitudes.forEach(apt => {
+                afficherEtoiles(`star-${apt}`, Math.round(horse[apt] / 10));
+            });
+
+            setupActionButtons();
+            setInterval(baisserStatsAutomatiquement, 300000);
         });
-
-    // 2. Récupérer juste l'argent pour la logique des boutons
-    fetch("/api/user")
-        .then(res => res.json())
-        .then(data => {
-            if (data.loggedIn) {
-                userCoins = data.user.argent || 0;
-            }
-        });
-
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const displayGroup = document.getElementById("name-display-group");
