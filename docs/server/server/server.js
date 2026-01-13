@@ -87,6 +87,17 @@ app.get("/mes_chevaux", (req, res) => {
     });
 });
 
+app.get("/entrainement", (req, res) => {
+    if (!req.session.user) return res.redirect("/");
+    res.render("entrainement", { user: req.session.user });
+});
+
+
+app.get("/mini_jeu", (req, res) => {
+    if (!req.session.user) return res.redirect("/");
+    res.render("mini_jeu", { user: req.session.user });
+});
+
 app.post("/register", (req, res) => {
     const { nom, prenom, date_naissance, sexe, race, couleur } = req.body;
     console.log("Body reçu:", req.body); // log du body complet
@@ -564,6 +575,23 @@ app.get("/api/my-horses", (req, res) => {
         });
 
         res.json(Object.values(horsesMap));
+    });
+});
+
+// API pour mettre à jour stats après entraînement
+app.post("/api/entrainement", (req, res) => {
+    if (!req.session.user) return res.status(401).send("Non connecté");
+
+    const { horseId, energie, sante, moral } = req.body;
+
+    const sql = `UPDATE possede_chevaux SET energie = ?, sante = ?, moral = ? WHERE id = ? AND user_id = ?`;
+
+    db.query(sql, [energie, sante, moral, horseId, req.session.user.id], (err) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).send("Erreur lors de la mise à jour du cheval");
+        }
+        res.json({ success: true });
     });
 });
 

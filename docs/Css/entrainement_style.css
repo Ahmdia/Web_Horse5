@@ -1,0 +1,83 @@
+/* Page d'entraînement */
+
+
+
+body.training-body {
+    display: block !important;
+    overflow-y: auto;
+    padding-top: 200px; /* pour le header */
+    background: #f3f3f3;
+}
+
+#training-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    text-align: center;
+    width: 100%;
+    display: block; /* important si parent flex */
+}
+
+
+
+
+.training-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+}
+
+
+
+
+
+
+
+@media (max-width: 600px) {
+    .training-grid {
+        grid-template-columns: 1fr; /* 1 par ligne sur mobile */
+    }
+}
+
+
+
+.training-card {
+    background: #f3e5ab;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.training-img {
+    width: 100%;
+    max-width: 120px;   /* taille max de l’image */
+    height: 120px;      /* hauteur fixe */
+    object-fit: contain;
+    margin: 0 auto 10px auto;
+    display: block;
+}
+
+
+.training-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.card-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.card-desc {
+    font-size: 0.9rem;
+    color: #666;
+}
+

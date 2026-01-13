@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block body_class %}training-body{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="Css/entrainement_style.css">
+{% endblock %}
+
+{% block content %}
+<main id="training-container">
+    <h2>🏋️ Entraînements disponibles</h2>
+    <p>Choisis une discipline pour entraîner ton cheval et améliorer ses aptitudes !</p>
+
+    <!-- Ajout du conteneur grid -->
+    <div class="training-grid">
+
+        <div class="training-card" data-type="cso">
+            <img src="Img/Training/cso.png" alt="CSO" class="training-img">
+            <div class="card-title">CSO</div>
+            <div class="card-desc">Améliore le saut et le galop</div>
+        </div>
+
+        <div class="training-card" data-type="dressage">
+            <img src="Img/Training/dressage.png" alt="dressage" class="training-img">
+            <div class="card-title">Dressage</div>
+            <div class="card-desc">Améliore le dressage, le trot et le galop</div>
+        </div>
+
+        <div class="training-card" data-type="longe">
+            <img src="Img/Training/longe.png" alt="longe" class="training-img">
+            <div class="card-title">Longe</div>
+            <div class="card-desc">Améliore le dressage et l'endurance</div>
+        </div>
+
+        <div class="training-card" data-type="balade">
+            <img src="Img/Training/balade.png" alt="balade" class="training-img">
+            <div class="card-title">Balade</div>
+            <div class="card-desc">Améliore l'endurance</div>
+        </div>
+
+    </div> <!-- fin training-grid -->
+
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="Js/entrainement.js"></script>
+{% endblock %}
+
+
+
+
+
+
