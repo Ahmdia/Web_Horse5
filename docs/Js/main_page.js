@@ -38,6 +38,15 @@ document.addEventListener("DOMContentLoaded", () => {
             setupActionButtons();
             setInterval(baisserStatsAutomatiquement, 300000);
         });
+
+    fetch("/api/user")
+        .then(res => res.json())
+        .then(data => {
+            if (data.loggedIn) {
+                userCoins = data.user.argent || 0;
+            }
+        });
+
 });
 
 
@@ -106,12 +115,22 @@ function sauvegarderStatsBDD() {
     });
 }
 
-function sauvegarderArgentBDD() {
-    fetch("/api/update-money", {
+async function sauvegarderArgentBDD() {
+    await fetch("/api/update-money", { // Notez le "await" ici
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ montant: userCoins })
     });
+    // Une fois la sauvegarde terminée, on met à jour le visuel
+    if (typeof updateHeader === "function") updateHeader();
+}
+
+function updateVisualBars() {
+    for (let s in horseStats) {
+        if (horseStats[s] > 100) horseStats[s] = 100;
+        if (horseStats[s] < 0) horseStats[s] = 0;
+        document.getElementById(`bar-${s}`).style.width = horseStats[s] + "%";
+    }
 }
 
 function setupActionButtons() {
@@ -132,7 +151,7 @@ function setupActionButtons() {
 
             userCoins -= cout;
             // On met à jour le header via la fonction globale
-            if (typeof updateHeader === "function") updateHeader(); 
+            //if (typeof updateHeader === "function") updateHeader(); 
 
             if (type === "Carotte") horseStats.energie += 15;
             else if (type === "Foin") horseStats.energie += 5;
@@ -148,13 +167,7 @@ function setupActionButtons() {
     });
 }
 
-function updateVisualBars() {
-    for (let s in horseStats) {
-        if (horseStats[s] > 100) horseStats[s] = 100;
-        if (horseStats[s] < 0) horseStats[s] = 0;
-        document.getElementById(`bar-${s}`).style.width = horseStats[s] + "%";
-    }
-}
+
 
 function baisserStatsAutomatiquement() {
     horseStats.energie -= 5;

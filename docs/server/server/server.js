@@ -199,12 +199,20 @@ app.post("/login", (req, res) => {
 // -------------------------------
 // SESSION
 // -------------------------------
+
 app.get("/api/user", (req, res) => {
-    if (req.session.user) {
-        res.json({ loggedIn: true, user: req.session.user });
-    } else {
-        res.json({ loggedIn: false });
-    }
+    if (!req.session.user) return res.json({ loggedIn: false });
+
+    // On va chercher les infos les plus récentes en BDD
+    db.query("SELECT id, nom, argent FROM users WHERE id = ?", [req.session.user.id], (err, results) => {
+        if (err || results.length === 0) return res.status(500).json({ loggedIn: false });
+        
+        const userFreshData = results[0];
+        // Optionnel : on met à jour la session pour qu'elle soit synchro
+        req.session.user.argent = userFreshData.argent; 
+        
+        res.json({ loggedIn: true, user: userFreshData });
+    });
 });
 // -------------------------------
 // COULEURS PAR RACE
@@ -382,6 +390,20 @@ app.get("/api/user-first-horse", (req, res) => {
     });
 });
 
+
+
+app.post("/api/update-horse-stats", (req, res) => {
+    if (!req.session.user) return res.status(401).send("Non connecté");
+
+    const { horseId, energie, sante, moral } = req.body;
+
+    const sql = `UPDATE possede_chevaux2 SET energie = ?, sante = ?, moral = ? WHERE id = ? AND user_id = ?`;
+    
+    db.query(sql, [energie, sante, moral, horseId, req.session.user.id], (err) => {
+        if (err) return res.status(500).send("Erreur sauvegarde");
+        res.send("OK");
+    });
+});
 //Gestion des pieces
 
 app.post("/api/update-money", (req, res) => {
@@ -410,15 +432,43 @@ app.post("/api/rename-horse", (req, res) => {
 //###################  Boutique ########################//
 // Route pour récupérer le catalogue de l'écurie
 app.get("/api/ecurie-list", (req, res) => {
-    const query = "SELECT * FROM ecurie2"; // on prend ecurie2 maintenant
+    // Jointure pour récupérer les infos du modèle + tous les calques d'images associés
+    const query = `
+        SELECT e.*, ci.image_path, ci.layer_order, ci.couche
+        FROM ecurie2 e
+        LEFT JOIN chevaux_images ci ON e.race = ci.race AND e.couleur = ci.couleur
+        ORDER BY e.id ASC, ci.layer_order ASC
+    `;
+
     db.query(query, (err, results) => {
         if (err) {
-            console.error("Erreur lors de la récupération de l'écurie:", err);
+            console.error("Erreur ecurie-list:", err);
             return res.status(500).json({ error: "Erreur serveur" });
         }
-        res.json(results);
+
+        // Regroupement par cheval
+        const shopHorses = {};
+        results.forEach(row => {
+            if (!shopHorses[row.id]) {
+                shopHorses[row.id] = {
+                    id: row.id,
+                    race: row.race,
+                    couleur: row.couleur,
+                    vitesse: row.vitesse,
+                    endurance: row.endurance,
+                    saut: row.saut,
+                    images: []
+                };
+            }
+            if (row.image_path) {
+                shopHorses[row.id].images.push(row.image_path);
+            }
+        });
+
+        res.json(Object.values(shopHorses));
     });
 });
+
 app.post("/api/buy-horse", (req, res) => {
     if (!req.session.user) 
         return res.status(401).json({ success: false, message: "Non connecté" });
@@ -447,8 +497,8 @@ app.post("/api/buy-horse", (req, res) => {
             // 3. INSERT dans possede_chevaux
             const insertQuery = `
                 INSERT INTO possede_chevaux2 
-                (user_id, ecurie_id, nom_personnalise, energie, sante, moral) 
-                VALUES (?, ?, ?, 50, 50, 50)
+                (user_id, ecurie_id, nom_personnalise, energie, sante, moral,actif) 
+                VALUES (?, ?, ?, 50, 50, 50,0)
             `;
 
             db.query(insertQuery, [userId, horseId, defaultName], (err) => {
@@ -478,14 +528,60 @@ app.post("/api/buy-horse", (req, res) => {
 app.get("/api/my-horses", (req, res) => {
     if (!req.session.user) return res.status(401).json([]);
     
+    // Jointure triple : possede_chevaux2 -> ecurie2 -> chevaux_images
     const query = `
-        SELECT p.*, e.vitesse, e.endurance, e.saut, e.chemin_image, e.nom as race
+        SELECT 
+            p.id, p.nom_personnalise, p.actif, p.energie, p.sante, p.moral,
+            e.vitesse, e.endurance, e.saut, e.race, e.couleur,
+            ci.image_path, ci.layer_order
         FROM possede_chevaux2 p
-        JOIN ecurie e ON p.ecurie_id = e.id
-        WHERE p.user_id = ?`;
+        JOIN ecurie2 e ON p.ecurie_id = e.id
+        LEFT JOIN chevaux_images ci ON ci.race = e.race AND ci.couleur = e.couleur
+        WHERE p.user_id = ?
+        ORDER BY p.id ASC, ci.layer_order ASC`;
     
     db.query(query, [req.session.user.id], (err, results) => {
         if (err) return res.status(500).json([]);
+
+        // On regroupe les calques par cheval
+        const horsesMap = {};
+        results.forEach(row => {
+            if (!horsesMap[row.id]) {
+                horsesMap[row.id] = {
+                    id: row.id,
+                    nom_personnalise: row.nom_personnalise,
+                    actif: row.actif,
+                    vitesse: row.vitesse,
+                    endurance: row.endurance,
+                    saut: row.saut,
+                    race: row.race,
+                    images: []
+                };
+            }
+            if (row.image_path) {
+                horsesMap[row.id].images.push(row.image_path);
+            }
+        });
+
+        res.json(Object.values(horsesMap));
+    });
+});
+
+app.get("/api/accessoires-list", (req, res) => {
+    // On sélectionne uniquement Forelock (1), Mane (2) et Tail (3)
+    // On utilise DISTINCT pour ne pas avoir 10 fois la même crinière si elle est liée à plusieurs chevaux
+    const query = `
+        SELECT DISTINCT image_path, couche, race, couleur
+        FROM chevaux_images
+        WHERE layer_order IN (1, 2, 3)
+        ORDER BY layer_order ASC
+    `;
+
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error("Erreur accessoires-list:", err);
+            return res.status(500).json({ error: "Erreur serveur" });
+        }
         res.json(results);
     });
 });
