@@ -11,37 +11,42 @@
     <h2>🏋️ Entraînements disponibles</h2>
     <p>Choisis une discipline pour entraîner ton cheval et améliorer ses aptitudes !</p>
 
+    <!-- Ajout du conteneur grid -->
     <div class="training-grid">
-        <div class="training-card" data-discipline="cso">
-            <div class="card-icon">🐎</div>
+
+        <div class="training-card" data-type="cso">
+            <img src="Img/Training/cso.png" alt="CSO" class="training-img">
             <div class="card-title">CSO</div>
-            <div class="card-desc">Saut d’obstacles – Énergie -10, Moral -5</div>
+            <div class="card-desc">Améliore le saut et le galop</div>
         </div>
 
-        <div class="training-card" data-discipline="dressage">
-            <div class="card-icon">🎭</div>
+        <div class="training-card" data-type="dressage">
+            <img src="Img/Training/dressage.png" alt="dressage" class="training-img">
             <div class="card-title">Dressage</div>
-            <div class="card-desc">Dressage – Énergie -8, Moral -3</div>
+            <div class="card-desc">Améliore le dressage, le trot et le galop</div>
         </div>
 
-        <div class="training-card" data-discipline="longe">
-            <div class="card-icon">⛰️</div>
+        <div class="training-card" data-type="longe">
+            <img src="Img/Training/longe.png" alt="longe" class="training-img">
             <div class="card-title">Longe</div>
-            <div class="card-desc">Endurance – Énergie -5, Moral +2</div>
+            <div class="card-desc">Améliore le dressage et l'endurance</div>
         </div>
 
-        <div class="training-card" data-discipline="balade">
-            <div class="card-icon">🌳</div>
+        <div class="training-card" data-type="balade">
+            <img src="Img/Training/balade.png" alt="balade" class="training-img">
             <div class="card-title">Balade</div>
-            <div class="card-desc">Relaxation – Énergie -3, Moral +5</div>
+            <div class="card-desc">Améliore l'endurance</div>
         </div>
-    </div>
+
+    </div> <!-- fin training-grid -->
+
 </main>
 {% endblock %}
 
 {% block extra_js %}
 <script src="Js/entrainement.js"></script>
 {% endblock %}
+
 
 
 
