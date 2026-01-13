@@ -1,0 +1,10 @@
+#game-container {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+canvas {
+    background: linear-gradient(#87ceeb, #dff9fb);
+    border-radius: 15px;
+    border: 3px solid #333;
+}

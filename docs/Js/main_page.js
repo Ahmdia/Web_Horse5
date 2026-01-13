@@ -3,42 +3,38 @@ let userCoins = 0; // On le garde pour la vérification locale
 let currentHorseId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    const savedStats = sessionStorage.getItem("horseStats");
+if (savedStats) {
+    horseStats = JSON.parse(savedStats);
+    updateVisualBars();
+    sessionStorage.removeItem("horseStats");
+}
+
+    // 1. Charger le cheval
     fetch("/api/user-first-horse")
         .then(res => res.json())
         .then(data => {
-            if (!data.found) return;
+            if (data.found) {
+                const horse = data.horse;
+                currentHorseId = horse.id;
+                document.getElementById("user-horse-img").src = horse.chemin_image;
+                document.getElementById("user-horse-img").style.display = "block";
+                document.getElementById("user-horse-name").innerText = horse.nom_personnalise || horse.nom;
 
-            const horse = data.horse;
-            currentHorseId = horse.id;
+                
+                initStats(horse); 
+                const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
+                aptitudes.forEach(apt => {
+                    afficherEtoiles(`star-${apt}`, Math.round(horse[apt] / 10));
+                });
 
-            // 🔥 AFFICHAGE DES IMAGES
-            const container = document.getElementById("customCheval");
-            container.innerHTML = "";
-
-            horse.images.forEach(layer => {
-                const img = document.createElement("img");
-                img.src = layer.src;
-                img.alt = layer.couche;
-                img.classList.add("horse-layer");
-                img.style.zIndex = layer.order;
-                container.appendChild(img);
-            });
-
-            // 📝 Nom
-            document.getElementById("user-horse-name").innerText =
-                horse.nom_personnalise || horse.race;
-
-            // ⭐ Stats
-            initStats(horse);
-            const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
-            aptitudes.forEach(apt => {
-                afficherEtoiles(`star-${apt}`, Math.round(horse[apt] / 10));
-            });
-
-            setupActionButtons();
-            setInterval(baisserStatsAutomatiquement, 300000);
+                setupActionButtons();
+                setInterval(baisserStatsAutomatiquement, 300000);
+            }
         });
 
+    // 2. Récupérer juste l'argent pour la logique des boutons
     fetch("/api/user")
         .then(res => res.json())
         .then(data => {
@@ -47,8 +43,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-});
+        
 
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     const displayGroup = document.getElementById("name-display-group");
@@ -115,22 +112,12 @@ function sauvegarderStatsBDD() {
     });
 }
 
-async function sauvegarderArgentBDD() {
-    await fetch("/api/update-money", { // Notez le "await" ici
+function sauvegarderArgentBDD() {
+    fetch("/api/update-money", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ montant: userCoins })
     });
-    // Une fois la sauvegarde terminée, on met à jour le visuel
-    if (typeof updateHeader === "function") updateHeader();
-}
-
-function updateVisualBars() {
-    for (let s in horseStats) {
-        if (horseStats[s] > 100) horseStats[s] = 100;
-        if (horseStats[s] < 0) horseStats[s] = 0;
-        document.getElementById(`bar-${s}`).style.width = horseStats[s] + "%";
-    }
 }
 
 function setupActionButtons() {
@@ -151,7 +138,7 @@ function setupActionButtons() {
 
             userCoins -= cout;
             // On met à jour le header via la fonction globale
-            //if (typeof updateHeader === "function") updateHeader(); 
+            if (typeof updateHeader === "function") updateHeader(); 
 
             if (type === "Carotte") horseStats.energie += 15;
             else if (type === "Foin") horseStats.energie += 5;
@@ -167,7 +154,13 @@ function setupActionButtons() {
     });
 }
 
-
+function updateVisualBars() {
+    for (let s in horseStats) {
+        if (horseStats[s] > 100) horseStats[s] = 100;
+        if (horseStats[s] < 0) horseStats[s] = 0;
+        document.getElementById(`bar-${s}`).style.width = horseStats[s] + "%";
+    }
+}
 
 function baisserStatsAutomatiquement() {
     horseStats.energie -= 5;
@@ -228,3 +221,4 @@ window.addEventListener("click", () => {
 });
 
 */
+
