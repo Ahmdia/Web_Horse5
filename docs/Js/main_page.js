@@ -3,6 +3,13 @@ let userCoins = 0; // On le garde pour la vérification locale
 let currentHorseId = null;
 
 document.addEventListener("DOMContentLoaded", () => {
+
+    const savedStats = sessionStorage.getItem("horseStats");
+    if (savedStats) {
+        horseStats = JSON.parse(savedStats);
+        updateVisualBars();
+        sessionStorage.removeItem("horseStats");
+    }
     fetch("/api/user-first-horse")
         .then(res => res.json())
         .then(data => {
