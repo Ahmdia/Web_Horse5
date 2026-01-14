@@ -5,7 +5,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cards.forEach(card => {
         card.addEventListener("click", () => {
-            const discipline = card.dataset.discipline;
+            const discipline = card.dataset.type;
+
 
             // 1. Récupérer le cheval actif
             fetch("/api/user-first-horse")
