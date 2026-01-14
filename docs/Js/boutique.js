@@ -29,14 +29,26 @@ function loadShopHorses() {
                 
                 // On prépare les calques
                 let layersHTML = '<div class="horse-shop-container">';
-                if (horse.images && horse.images.length > 0) {
-                    horse.images.forEach(src => {
-                        layersHTML += `<img src="${src}" class="shop-layer">`;
-                    });
-                } else {
-                    layersHTML += `<div style="padding:20px; text-align:center;">Image non disponible</div>`;
-                }
-                layersHTML += '</div>';
+
+if (horse.images && horse.images.length > 0) {
+
+    const layerOrder = ['shadow', 'body', 'mane', 'forelock', 'tail'];
+
+    layerOrder.forEach(layerName => {
+        const img = horse.images.find(src =>
+            src.toLowerCase().includes(layerName)
+        );
+        if (img) {
+            layersHTML += `<img src="${img}" class="shop-layer ${layerName}">`;
+        }
+    });
+
+} else {
+    layersHTML += `<div style="padding:20px; text-align:center;">Image non disponible</div>`;
+}
+
+layersHTML += '</div>';
+
 
                 const card = document.createElement("div");
                 card.className = "item-card";

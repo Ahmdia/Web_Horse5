@@ -13,10 +13,12 @@ function loadMyHorses() {
                 
                 // Génération du HTML pour les calques d'images
                 let imagesHTML = '<div class="horse-preview-container">';
-                horse.images.forEach(src => {
-                    imagesHTML += `<img src="${src}" class="horse-layer">`;
-                });
-                imagesHTML += '</div>';
+                    horse.images
+                         .sort((a, b) => b.order - a.order)
+                         .forEach(img => {
+                             imagesHTML += `<img src="${img.src}" class="horse-layer horse-${img.couche}">`;
+                         });
+                    imagesHTML += '</div>';
 
                 card.innerHTML = `
                     ${horse.actif ? '<div class="status-badge">⭐ Actuel</div>' : ''}

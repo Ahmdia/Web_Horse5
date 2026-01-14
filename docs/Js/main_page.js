@@ -4,9 +4,15 @@ let currentHorseId = null;
 let horseSkills = null;
 
 
-document.addEventListener("DOMContentLoaded", () => {
 
-    
+
+
+
+
+
+
+
+document.addEventListener("DOMContentLoaded", () => {
     const savedStats = sessionStorage.getItem("horseStats");
 const savedSkills = sessionStorage.getItem("horseSkills");
 
@@ -41,16 +47,23 @@ if (savedSkills) {
             const horse = data.horse;
             currentHorseId = horse.id;
 
-            // 🔥 AFFICHAGE DES IMAGES
             const container = document.getElementById("customCheval");
             container.innerHTML = "";
+            const sortedImages = [...horse.images].sort(
+                (a, b) => b.order - a.order
+            );
+            let baseZ = 10;
 
-            horse.images.forEach(layer => {
+            sortedImages.forEach(layer => {
                 const img = document.createElement("img");
                 img.src = layer.src;
                 img.alt = layer.couche;
                 img.classList.add("horse-layer");
-                img.style.zIndex = layer.order;
+                if (layer.couche === "shadow") {
+                    img.style.zIndex = 1;
+                } else {
+                    img.style.zIndex = baseZ++;
+                }
                 container.appendChild(img);
             });
 
@@ -235,26 +248,3 @@ function modifierNomCheval(nouveauNom) {
         }
     });
 }
-/*
-function remplirJaugesAleatoires() {
-    ['energie', 'sante', 'moral'].forEach(stat => {
-        const val = Math.floor(Math.random() * 70) + 30;
-        document.getElementById(`bar-${stat}`).style.width = val + "%";
-    });
-}
-
-// 2. Gestion du menu déroulant Profil
-const profileTrigger = document.getElementById("profile-trigger");
-const dropdown = document.getElementById("user-dropdown");
-
-profileTrigger.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdown.classList.toggle("show");
-});
-
-// Fermer le menu si on clique ailleurs
-window.addEventListener("click", () => {
-    dropdown.classList.remove("show");
-});
-
-*/

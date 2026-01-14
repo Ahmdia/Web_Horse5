@@ -111,68 +111,84 @@ modal.addEventListener("click", (e) => {
   }
 });
 
-
 const form = document.getElementById("formulaire_cheval");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  if (!selectedRace || !selectedColor) {
-    alert("Veuillez choisir une race et une couleur !");
-    return;
-  }
-  const nom = document.getElementById("nom").value;
-  const prenom = document.getElementById("prenom").value;
+
+  const nom = document.getElementById("nom").value.trim();
+  const prenom = document.getElementById("prenom").value.trim();
   const date_naissance = document.getElementById("date_naissance").value;
   const sexe = document.querySelector('input[name="sexe"]:checked')?.value;
 
-  let imageComplet = null;
-  const chevalEl = document.getElementById("cheval");
+  // Vérifier si le cheval est personnalisé
+  const isCustomHorse = selectedLayers.body && selectedLayers.mane && selectedLayers.tail && selectedLayers.forelock;
 
-  if (chevalEl?.tagName === "IMG") {
-    imageComplet = chevalEl.getAttribute("src");
-  }
-
-  if (!imageComplet && chevalEl) {
-    const bg = window.getComputedStyle(chevalEl).backgroundImage;
-    const match = bg?.match(/url\(["']?(.*?)["']?\)/);
-    if (match) imageComplet = match[1];
-  }
-
-  if (!imageComplet) {
-    alert("Veuillez sélectionner un cheval.");
+  // Validation du formulaire
+  if (!nom || !prenom || !date_naissance || !sexe || !selectedRace || (!selectedColor && !isCustomHorse)) {
+    alert("Veuillez remplir tous les champs et choisir race et couleur ou personnaliser le cheval.");
     return;
   }
 
-  if (imageComplet.startsWith("/")) {
-    imageComplet = imageComplet.substring(1);
+  // Récupérer l'image du cheval si non personnalisé
+  let imageComplet = null;
+  const chevalEl = document.getElementById("cheval");
+  if (!isCustomHorse && chevalEl) {
+    if (chevalEl?.tagName === "IMG") {
+      imageComplet = chevalEl.getAttribute("src");
+    } else {
+      const bg = window.getComputedStyle(chevalEl).backgroundImage;
+      const match = bg?.match(/url\(["']?(.*?)["']?\)/);
+      if (match) imageComplet = match[1];
+    }
+
+    if (!imageComplet) {
+      alert("Veuillez sélectionner un cheval.");
+      return;
+    }
+
+    if (imageComplet.startsWith("/")) {
+      imageComplet = imageComplet.substring(1);
+    }
   }
+
+  // Préparer le payload à envoyer
+  const formData = {
+    nom,
+    prenom,
+    date_naissance,
+    sexe,
+    race: selectedRace,
+    couleur: isCustomHorse ? null : selectedColor,
+    chevalImages: isCustomHorse ? selectedLayers : null
+  };
 
   try {
     const response = await fetch("/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-         nom,
-         prenom,
-         date_naissance,
-         sexe,
-         race: selectedRace, // la race sélectionnée
-         couleur: selectedColor // la couleur sélectionnée
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
     });
-    
 
-    const result = await response.text();
+    // Tenter de parser le JSON même si status != 200
+    const data = await response.json().catch(() => null);
 
-    if (result === "Inscription réussie") {
-      window.location.href = "/main_page";
+    if (response.ok && data?.success) {
+        // Cheval normal ou personnalisé enregistré avec succès
+        if (data.chevalImage) {
+            localStorage.setItem("chevalImage", data.chevalImage);
+        }
+        window.location.href = "/main_page";
     } else {
-      alert(result);
+        // Affiche le message d'erreur provenant du serveur
+        const msg = data?.message || `Erreur inscription : ${response.status} ${response.statusText}`;
+        alert(msg);
     }
-  } catch (err) {
-    console.error("❌ Erreur :", err);
-  }
-});
+} catch (err) {
+    console.error("❌ Erreur réseau ou JSON invalide :", err);
+    alert("Erreur serveur, réessayez plus tard");
+}
 
+});
 
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -183,7 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.loggedIn) {
                 statusDiv.innerHTML = `
                     <span>Bienvenue, <strong>${data.user.nom}</strong> !</span>
-                    <a href="/logout" style="color: #ff4d4d; margin-left: 10px;">Déconnexion</a>
                 `;
                 // Optionnel : masquer le bouton "Valider choix" si déjà connecté
                 document.getElementById("valider-btn").style.display = "none";
@@ -279,39 +294,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 //gestion de dialogue 
-document.addEventListener("DOMContentLoaded", () => {
-  const person = document.getElementById("personImg");
-  const bubble = document.getElementById("speechBubble");
-  const bubbleText = document.getElementById("bubbleText");
-  const nextBtn = document.getElementById("nextBtn");
 
-  const dialogues = [
-    "Bienvenue au Ranch !",
-    "Choisis ton cheval."
-  ];
-  let index = 0;
-
-  setTimeout(() => {
-    person.style.opacity = 1;
-    bubble.style.display = "block";
-    bubble.style.opacity = 1;
-    bubbleText.textContent = dialogues[index];
-  }, 5000); // 5 secondes
-
-  nextBtn.addEventListener("click", () => {
-    index++;
-    if (index < dialogues.length) {
-      bubbleText.textContent = dialogues[index];
-    } else {
-      // tout cacher après dernier message
-      bubble.style.opacity = 0;
-      person.style.opacity = 0;
-      setTimeout(() => {
-        bubble.style.display = "none";
-      }, 500);
-    }
-  });
-});
 document.addEventListener("DOMContentLoaded", () => {
   const person = document.getElementById("personImg");
   const bubble = document.getElementById("speechBubble");
@@ -321,10 +304,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const overlay = document.getElementById("overlay");
 
-  const dialogues = [
-    "Bienvenue ! Prêt pour ton aventure à l’Écurie Tagada",
-    "Choisis ton cheval."
-  ];
+const dialogues = [
+  "Bienvenue à l’Écurie Tagada \n Ton aventure commence ici.",
+  "Explore les races, choisis ton cheval, puis crée ton compte pour continuer."
+];
+
   let index = 0;
 
   setTimeout(() => {
@@ -415,6 +399,50 @@ function resetSelectedLayers() {
 // ===============================
 // OUVERTURE MODALE PERSONNALISATION
 // ===============================
+let isCustomHorse = false;
+
+
+const defaultStats = {
+    endurance: 50,
+    vitesse: 50,
+    dressage: 50,
+    galop: 50,
+    trot: 50,
+    saut: 50
+};
+
+
+
+const validateCustomHorseBtn = document.getElementById("validateCustomHorse");
+validateCustomHorseBtn.addEventListener("click", () => {
+  const couleur = document.getElementById('couleur_cheval').value.trim();
+
+  const errorMsg = document.getElementById("modalErrorMsg");
+
+  if (
+    !selectedLayers.body ||
+    !selectedLayers.mane ||
+    !selectedLayers.tail ||
+    !selectedLayers.forelock
+  ) {
+    errorMsg.textContent = "Tu dois sélectionner body, mane, tail et forelock.";
+    errorMsg.style.display = "block";
+    return;
+  }
+if (!couleur) {
+    alert("Veuillez entrer une couleur pour votre cheval.");
+    return;
+}
+  selectedColor = couleur;
+
+  isCustomHorse = true; // <-- cheval personnalisé validé
+  errorMsg.style.display = "none";
+  customModal.style.display = "none";
+    console.log("Couleur cheval personnalisé :", selectedColor);
+
+});
+
+
 customBtn.addEventListener("click", async () => {
   if (!selectedRace) {
     alert("Choisis d'abord une race");
@@ -473,18 +501,12 @@ customBtn.addEventListener("click", async () => {
 // ===============================
 // FERMETURE MODALE
 // ===============================
-closeCustomModal.addEventListener("click", () => {
-  // Vérifier si toutes les pièces obligatoires sont choisies
-  if (!selectedLayers.body || !selectedLayers.mane || !selectedLayers.tail || !selectedLayers.forelock) {
-    const errorMsg = document.getElementById("modalErrorMsg");
-    if (errorMsg) {
-      errorMsg.textContent = "Tu dois sélectionner toutes les parties : body, mane, tail et forelock ";
-      errorMsg.style.display = "block";
-    }
-    return; // ne ferme pas la modale
-  }
 
-  // Si tout est sélectionné, fermer modale
+
+
+closeCustomModal.addEventListener("click", () => {
+  // ❌ annulation → on reset
+  resetSelectedLayers();
   customModal.style.display = "none";
 });
 ////////////////////////////////
@@ -492,20 +514,35 @@ const formInscription = document.getElementById('formulaire_cheval');
 
 if (formInscription) {
     formInscription.addEventListener('submit', async (e) => {
-        e.preventDefault(); // bloque l'envoi classique du formulaire
+        e.preventDefault(); // bloque l'envoi classique
 
-        // Récupérer dynamiquement les valeurs au moment du submit
-        const race = document.querySelector('input[name="race"]:checked')?.value;
-        const couleur = document.querySelector('input[name="couleur"]:checked')?.value;
+        // Récupérer les valeurs du formulaire
+        const nom = document.getElementById('nom').value.trim();
+        const prenom = document.getElementById('prenom').value.trim();
+        const date_naissance = document.getElementById('date_naissance').value;
+        const sexe = document.querySelector('input[name="sexe"]:checked')?.value || '';
+        const race = selectedRace;
+        const couleur = selectedColor;
 
+        const isCustomHorse = selectedLayers.body && selectedLayers.mane && selectedLayers.tail && selectedLayers.forelock;
+
+    if (!nom || !prenom || !date_naissance || !sexe || !race || (!couleur && !isCustomHorse)) {
+    alert("Veuillez remplir tous les champs et choisir race et couleur ou personnaliser le cheval.");
+    return;
+}
+
+        // Déterminer si c'est un cheval personnalisé
+
+        // Préparer le payload à envoyer
         const formData = {
-            nom: document.getElementById('nom').value,
-            prenom: document.getElementById('prenom').value,
-            date_naissance: document.getElementById('date_naissance').value,
-            sexe: document.querySelector('input[name="sexe"]:checked')?.value,
-            race: race,
-            couleur: couleur
-        };
+    nom,
+    prenom,
+    date_naissance,
+    sexe,
+    race,
+    couleur: selectedColor,
+    chevalImages: isCustomHorse ? selectedLayers : null
+};
 
         try {
             const response = await fetch('/register', {
@@ -517,10 +554,12 @@ if (formInscription) {
             const data = await response.json();
 
             if (data.success) {
-                // Stocker l'image du cheval si besoin
-                localStorage.setItem('chevalImage', data.chevalImage);
+                // Optionnel : stocker l'image du cheval personnalisé pour usage local
+                if (data.chevalImage) {
+                    localStorage.setItem('chevalImage', data.chevalImage);
+                }
 
-                // Rediriger vers la page principale
+                // Redirection vers la page principale
                 window.location.href = '/main_page';
             } else {
                 alert("Erreur inscription : " + (data.message || "Veuillez réessayer"));
@@ -531,3 +570,24 @@ if (formInscription) {
         }
     });
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
