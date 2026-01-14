@@ -37,13 +37,15 @@
 
 .shop-category-title {
     text-align: center;
-    color: #4e342e;
     margin-bottom: 30px;
 }
-
+.shop-category-title p {
+    color: #525203;
+}
 .shop-category-title h2 {
     font-family: 'Rye', cursive;
     font-size: 2.5rem;
+    color: #ffd651;
     margin-bottom: 5px;
 }
 
@@ -182,4 +184,31 @@ body.boutique-body {
 .accessory-card .item-img {
     max-height: 100px;
     width: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.horse-shop-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: auto;
+}
+
+.shop-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    pointer-events: none;
 }

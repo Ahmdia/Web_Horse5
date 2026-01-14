@@ -51,21 +51,24 @@ body {
   color: white;
 }
 #races h1 {
-  position: relative;
-  margin: 0;
-  left: 20px;
-
-
+  font-family: 'Pacifico', cursive; 
+  margin-left: 40px;
+  font-weight: normal;
+  text-align: center;               /* centré par rapport à la colonne */
+  color: #ffffff;
   animation: slidein 0.8s ease forwards;
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.4); /* effet léger pour faire ressortir */
 }
 
-/* IMPORTANT */
 #races h2 {
   position: relative;
   margin: 6px 0;
+  font-family: 'Pacifico', cursive; /* jolie police manuscrite */
 
   font-size: 20px;              /* PLUS PETIT */
-  font-family: Arial, Helvetica, sans-serif; /* police simple */
+    font-family: 'Pacifico', cursive; /* jolie police manuscrite */
+
+  /*font-family: Arial, Helvetica, sans-serif; /* police simple */
   font-weight: 500;
 
   color: #ffffff;
@@ -78,9 +81,9 @@ body {
 /* Forme en vague */
 #camargue { right: 0px; }
 #pur_sang_anglais   { right: 20px; }
-#selle_francais       { right: 40px; }
-#fjord      { right: 60px; }
-#trotteur_francais      { right: 40px; }
+#selle_francais       { right: 60px; }
+#fjord      { right: 100px; }
+#trotteur_francais      { right: 60px; }
 #welsh        { right: 20px; }
 #akhal_teke         { right: 0px; }
 
@@ -93,6 +96,7 @@ body {
  width: 400px;        /* taille fixe */
   height: 400px;
   position: relative;
+  
   display: flex;
   align-items: center;
   justify-content: center;
@@ -166,24 +170,44 @@ body {
 /* ===============================
    BOUTON
 ================================ */
-#valider-btn {
+#horse-buttons {
   position: absolute;
-  bottom: 30px;
+  top: calc(50% + 220px); /* ajuste selon la taille du cheval */
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  z-index: 20;
+}
 
-  padding: 10px 24px;
+/* Style boutons */
+#horse-buttons button {
+  width: 220px;
+  padding: 12px;
   font-size: 16px;
-  border-radius: 20px;
+  border-radius: 25px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(135deg, #ffffff, #e8c98f);
-  color: #3a2a1a;
-    cursor: pointer;
   font-weight: bold;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: 0.3s;
+}
 
+/* Créer un compte */
+#valider-btn {
+background: linear-gradient(135deg, #fedf7a, #56430a);
+}
+
+/* Se connecter */
+#login-btn {
+  background: transparent;
+  border: 2px solid white;
+background: linear-gradient(135deg, #fedf7a, #56430a);
+}
+
+#horse-buttons button:hover {
+  transform: scale(1.05);
 }
 
 /* ===============================
@@ -202,32 +226,11 @@ body {
 
 
 
-#buttons-container {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column; /* empile les boutons verticalement */
-  gap: 10px; /* espace entre les boutons */
-  align-items: center;
-}
-
-#buttons-container button {
-  padding: 10px 25px;
-  font-size: 1vw;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  background-color: white;
-}
-
-
-
 
 
 
 /*      dialogue          */
+
 
 #overlay {
   position: fixed;
@@ -255,20 +258,41 @@ body {
 /* Bulle centrée horizontalement, un peu au-dessus du bas */
 .speech-bubble {
   position: fixed;
-  bottom: 150px; /* distance du bas */
+  bottom: 160px;
   left: 50%;
   transform: translateX(-50%);
-  max-width: 300px;
-  background: white;
-  padding: 15px;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+  max-width: 340px;
+  background: linear-gradient(145deg, #ffffff, #f2f2f2);
+  padding: 18px 20px;
+  border-radius: 22px;
+
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  z-index: 9999;
+  gap: 12px;
+
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+
   opacity: 0;
-  transition: opacity 0.5s;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.speech-bubble::after {
+  content: "";
+  position: absolute;
+  top: 20px;          /* ajuste la hauteur du triangle */
+  right: -12px;       /* place le triangle à l'extérieur de la bulle */
+
+  width: 0;
+  height: 0;
+
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 12px solid #ffffff; /* couleur de la bulle */
 }
 
 /* Personne en bas à droite */
@@ -285,10 +309,31 @@ body {
   transition: opacity 0.5s;
 }
 
+#bubbleText {
+  margin: 0;
+  white-space: pre-line; /* respecte les \n */
+  font-weight: 500;
+}
+#nextBtn {
+  align-self: flex-end;
+  padding: 6px 16px;
+  margin-top: 10px;
+  border-radius: 18px;
+  border: none;
+background: linear-gradient(135deg, #fedf7a, #56430a);
+  color: white;
 
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
 
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-
+#nextBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+}
 
 
 /* la fenetre modale de personnalisation 0*/
@@ -378,7 +423,7 @@ body {
   font-size: 16px;
   border-radius: 20px;
   border: none;
-  background: linear-gradient(135deg, #ffffff, #e8c98f);
+background: linear-gradient(135deg, #fedf7a, #56430a);
   color: #3a2a1a;
   cursor: pointer;
   font-weight: bold;
@@ -393,18 +438,7 @@ body {
   opacity: 0.4;
   cursor: not-allowed;
 }
- #login-btn{
-  position: absolute;
-  bottom: 0;           /* Le place en bas de la div */
-  left: 55%;
-  transform: translateX(-50%);
-  padding: 10px 20px;
-  font-size: 1vw;
-  border-radius: 10px;
-  border: none;
-  cursor: pointer;
-  background-color: white;
-}
+
 
 
 #customCheval {
