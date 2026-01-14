@@ -60,10 +60,10 @@
         <source src="Sound/charming-twinkle-sound-for-fantasy-and-magic-250240.mp3" type="audio/mpeg" />
       </audio>
 
-      <!-- Bouton créer compte -->
+<div id="horse-buttons">
   <button id="valider-btn">Créer un compte</button>
   <button id="login-btn">Se connecter</button>
-
+</div>
  <!-- <button id="login-btn">Se connecter</button>-->
 
       <!-- Conteneur des couleurs dynamiques -->
@@ -91,8 +91,10 @@
             </div>
 
             <div class="data">
-              <label for="prenom">Nom de cheval :</label>
-              <input type="text" id="prenom" name="prenom" required>
+              <label for="prenom">Mot de passe :</label>
+
+              <input type="password" id="prenom" name="prenom" required>
+
             </div>
 
             <div class="data">
@@ -125,7 +127,7 @@
               </div>
 
               <div class="data">
-                <label for="login_prenom">Nom de cheval (Mot de passe) :</label>
+                <label for="login_prenom">Mot de passe:</label>
                 <input type="password" id="login_prenom" name="prenom" required>
               </div>
 
@@ -172,8 +174,12 @@
 
       <!-- LISTE DES IMAGES -->
       <div id="customImages" class="custom-images-container"></div>
-
-    </div>
+             
+    </div><label for="couleur_cheval">couleur de cheval :</label>
+                <input type="text" id="couleur_cheval" name="couleur_cheval" required>
+      <button id="validateCustomHorse" class="btn-custom-validate">
+    Valider mon cheval
+  </button>
 
   </div>
 </div>
