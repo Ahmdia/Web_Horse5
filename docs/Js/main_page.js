@@ -1,15 +1,38 @@
 let horseStats = { energie: 0, sante: 0, moral: 0 };
 let userCoins = 0; // On le garde pour la vérification locale
 let currentHorseId = null;
+let horseSkills = null;
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
+    
     const savedStats = sessionStorage.getItem("horseStats");
-    if (savedStats) {
-        horseStats = JSON.parse(savedStats);
-        updateVisualBars();
-        sessionStorage.removeItem("horseStats");
-    }
+const savedSkills = sessionStorage.getItem("horseSkills");
+
+if (savedStats) {
+    horseStats = JSON.parse(savedStats);
+    updateVisualBars();
+    sessionStorage.removeItem("horseStats");
+}
+
+if (savedSkills) {
+    horseSkills = JSON.parse(savedSkills);
+
+    const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
+    aptitudes.forEach(apt => {
+        if (horseSkills[apt] !== undefined) {
+            afficherEtoiles(`star-${apt}`, Math.round(horseSkills[apt] / 10));
+        }
+    });
+
+    sessionStorage.removeItem("horseSkills");
+}
+
+
+
+
+
     fetch("/api/user-first-horse")
         .then(res => res.json())
         .then(data => {

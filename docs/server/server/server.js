@@ -417,14 +417,50 @@ app.post("/api/update-horse-stats", (req, res) => {
 });
 //Gestion des pieces
 
+
+
+// Gestion des pièces
 app.post("/api/update-money", (req, res) => {
     if (!req.session.user) return res.status(401).send("Non connecté");
+
     const { montant } = req.body;
+
     db.query("UPDATE users SET argent = ? WHERE id = ?", [montant, req.session.user.id], (err) => {
         if (err) return res.status(500).send("Erreur monnaie");
+
+        // ⚡ Mettre à jour la session avec le nouveau montant
+        req.session.user.argent = montant;
+
         res.send("OK");
     });
 });
+
+// ✅ AJOUTER DE L'ARGENT (mini-jeu, récompenses)
+app.post("/api/add-money", (req, res) => {
+    if (!req.session.user) return res.status(401).send("Non connecté");
+
+    const gain = parseInt(req.body.montant, 10);
+    if (isNaN(gain)) return res.status(400).send("Montant invalide");
+
+    const userId = req.session.user.id;
+
+    db.query(
+        "UPDATE users SET argent = argent + ? WHERE id = ?",
+        [gain, userId],
+        (err) => {
+            if (err) {
+                console.error("Erreur add-money:", err);
+                return res.status(500).send("Erreur monnaie");
+            }
+
+            // 🔥 SYNCHRO SESSION
+            req.session.user.argent += gain;
+
+            res.json({ success: true, gain });
+        }
+    );
+});
+
 
 app.post("/api/rename-horse", (req, res) => {
     if (!req.session.user) return res.status(401).send("Non connecté");

@@ -1,113 +1,138 @@
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
+document.addEventListener("DOMContentLoaded", () => {
+    const cards = document.querySelectorAll(".competition-card");
 
-// IMAGES
-const horseImg = new Image();
-horseImg.src = "Img/mini_jeu/horse.png";
-
-const obstacleImg = new Image();
-obstacleImg.src = "Img/mini_jeu/obstacle.png";
-
-// CHEVAL
-let cheval = {
-    x: 120,
-    y: 280,
-    width: 80,
-    height: 60,
-    vy: 0,
-    jumping: false
-};
-
-// OBSTACLES
-let obstacles = [
-    { x: 800, y: 310, width: 40, height: 40 },
-    { x: 1200, y: 310, width: 40, height: 40 }
-];
-
-let score = 0;
-const gravity = 0.8;
-const speed = 4;
-
-// CONTROLES
-document.addEventListener("keydown", e => {
-    if (e.key === "ArrowUp" && !cheval.jumping) {
-        cheval.vy = -14;
-        cheval.jumping = true;
-    }
+    cards.forEach(card => {
+        card.addEventListener("click", () => {
+            const reward = parseInt(card.dataset.reward);
+            const penalty = parseInt(card.dataset.penalty);
+            startMiniGame(reward, penalty);
+        });
+    });
 });
 
-// LOGIQUE
-function update() {
-    // Physique du cheval
-    cheval.vy += gravity;
-    cheval.y += cheval.vy;
+function startMiniGame(reward, penalty) {
+    document.querySelector(".competition-grid").style.display = "none";
+    const gameArea = document.getElementById("game-area");
+    gameArea.style.display = "block";
 
-    if (cheval.y >= 280) {
-        cheval.y = 280;
-        cheval.vy = 0;
-        cheval.jumping = false;
+    const canvas = document.getElementById("game-canvas");
+    const ctx = canvas.getContext("2d");
+
+    const horseImg = new Image();
+    horseImg.src = "Img/mini_jeu/horse.png";
+    const obsImg = new Image();
+    obsImg.src = "Img/mini_jeu/obstacle.png";
+
+    const horse = { x: 50, y: 130, width: 60, height: 60, vy:0, gravity: 1 };
+    const obstacles = [
+        { x: 700, y: 130, width: 50, height: 50, passed: false },
+        { x: 1100, y: 130, width: 50, height: 50, passed: false },
+        { x: 1500, y: 130, width: 50, height: 50, passed: false }
+    ];
+
+    let gameOver = false;
+    let jumps = 0;
+
+    document.addEventListener("keydown", (e) => {
+        if (e.code === "Space" && horse.y === 130) horse.vy = -20; // saut
+    });
+
+    function update() {
+        if(gameOver) return;
+
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+
+        // mouvement cheval
+        horse.vy += horse.gravity;
+        horse.y += horse.vy;
+        if(horse.y > 130) horse.y = 130, horse.vy = 0;
+
+        // obstacles
+        obstacles.forEach(ob => {
+            ob.x -= 6; // vitesse réduite
+            if(ob.x + ob.width < 0) ob.x = canvas.width + Math.random()*400;
+
+            // vérifier si le cheval passe l'obstacle sans collision
+            if(!ob.passed && horse.x > ob.x + ob.width) {
+                ob.passed = true;
+                jumps++;
+                if(jumps >= 3) {
+                    gameOver = true;
+                    endGame(true, reward, penalty);
+                }
+            }
+
+            // collision
+            if(horse.x < ob.x + ob.width &&
+               horse.x + horse.width > ob.x &&
+               horse.y < ob.y + ob.height &&
+               horse.y + horse.height > ob.y) {
+                gameOver = true;
+                endGame(false, reward, penalty);
+            }
+
+            ctx.drawImage(obsImg, ob.x, ob.y, ob.width, ob.height);
+        });
+
+        ctx.drawImage(horseImg, horse.x, horse.y, horse.width, horse.height);
+
+        if(!gameOver) requestAnimationFrame(update);
     }
 
-    // Obstacles
-    obstacles.forEach(ob => {
-        ob.x -= speed;
-        if (ob.x < -ob.width) {
-            ob.x = canvas.width + Math.random() * 400;
-            score++;
-        }
-
-        // Collision
-        if (
-            cheval.x < ob.x + ob.width &&
-            cheval.x + cheval.width > ob.x &&
-            cheval.y < ob.y + ob.height &&
-            cheval.y + cheval.height > ob.y
-        ) {
-            finDeJeu();
-        }
-    });
-}
-
-// DESSIN
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Sol
-    ctx.fillStyle = "#6ab04c";
-    ctx.fillRect(0, 340, canvas.width, 60);
-
-    // Cheval
-    ctx.drawImage(horseImg, cheval.x, cheval.y, cheval.width, cheval.height);
-
-    // Obstacles
-    obstacles.forEach(ob => {
-        ctx.drawImage(obstacleImg, ob.x, ob.y, ob.width, ob.height);
-    });
-
-    // Score
-    ctx.fillStyle = "#000";
-    ctx.font = "18px Arial";
-    ctx.fillText("Obstacles franchis : " + score, 10, 25);
-}
-
-// FIN DE JEU
-function finDeJeu() {
-    alert("🏆 Parcours terminé ! Score : " + score);
-
-    sessionStorage.setItem("horseStats", JSON.stringify({
-        energie: -15,
-        moral: +10,
-        sante: -5
-    }));
-
-    window.location.href = "/main_page";
-}
-
-// BOUCLE
-function loop() {
     update();
-    draw();
-    requestAnimationFrame(loop);
 }
 
-loop();
+function endGame(success, reward, penalty) {
+    alert(success ? `🎉 Succès ! Vous gagnez ${reward} 💰 !` : `💥 Échec ! Perte ${penalty} pts santé`);
+    
+    // Mise à jour des stats et argent
+    fetch("/api/user-first-horse")
+        .then(res => res.json())
+        .then(data => {
+            if(!data.found) return;
+            const horseId = data.horse.id;
+            let energie = data.horse.energie;
+            let sante = data.horse.sante;
+            let moral = data.horse.moral;
+            if(!success) sante -= penalty;
+            if(sante<0) sante=0;
+
+            // mettre à jour stats
+            fetch("/api/update-horse-stats", {
+                method:"POST",
+                headers: {"Content-Type":"application/x-www-form-urlencoded"},
+                body: new URLSearchParams({ horseId, energie, sante, moral })
+            });
+
+            // mettre à jour argent si succès
+            
+
+
+            if(success) {
+
+                fetch("/api/add-money", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams({ montant: 150 })
+                })
+                .then(() => {
+                    window.location.href = "/main_page";
+                });
+                
+                
+
+                
+                    
+            }
+            
+
+            // retour à main_page
+            window.location.href = "/main_page";
+        });
+}
+
+
+
+
+
+
