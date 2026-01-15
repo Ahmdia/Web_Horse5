@@ -34,8 +34,10 @@ function startMiniGame(reward, penalty) {
     let jumps = 0;
 
     document.addEventListener("keydown", (e) => {
-        if (e.code === "Space" && horse.y === 130) horse.vy = -20; // saut
+        if (e.code === "ArrowUp" && horse.y === 130) horse.vy = -20; // saut
     });
+    
+    
 
     function update() {
         if(gameOver) return;
