@@ -70,3 +70,25 @@ body.competition-body {
 
 
 
+#game-canvas {
+    border: 1px solid #000;
+    background-image: url("../Img/mini_jeu/fond_mini3.jpg");
+    background-size: cover;      
+    background-position: center;
+    background-repeat: no-repeat;
+}
+p {
+    text-align: center;
+    margin-bottom: 30px;
+     font-size: 1.3rem;
+
+    color: #cac387;
+}
+h2 {
+        text-align: center;
+    margin-top: 75px;
+    font-family: 'Rye', cursive;
+    font-size: 2.5rem;
+    color: #ffd651;
+    margin-bottom: 30px;
+}

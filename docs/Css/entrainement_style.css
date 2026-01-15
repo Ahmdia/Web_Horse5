@@ -103,3 +103,18 @@ body.training-body {
 .cooldown-timer {
     font-weight: bold;
 }
+p {
+    text-align: center;
+    margin-bottom: 30px;
+     font-size: 1.3rem;
+
+    color: #cac387;
+}
+h2 {
+        text-align: center;
+    margin-top: 55px;
+    font-family: 'Rye', cursive;
+    font-size: 2.5rem;
+    color: #ffd651;
+    margin-bottom: 30px;
+}
