@@ -21,23 +21,23 @@ function startMiniGame(reward, penalty) {
     const horseImg = new Image();
     horseImg.src = "Img/mini_jeu/horse.png";
     const obsImg = new Image();
-    obsImg.src = "Img/mini_jeu/obstacle.png";
+    obsImg.src = "Img/mini_jeu/decrochage.png";
 
     const horse = { x: 50, y: 130, width: 60, height: 60, vy:0, gravity: 1 };
     const obstacles = [
-        { x: 700, y: 130, width: 50, height: 50, passed: false },
-        { x: 1100, y: 130, width: 50, height: 50, passed: false },
-        { x: 1500, y: 130, width: 50, height: 50, passed: false }
+        { x: 700, y: 130, width: 50, height: 40, passed: false },
+        { x: 1100, y: 130, width: 50, height: 40, passed: false },
+        { x: 1500, y: 130, width: 50, height: 40, passed: false }
     ];
 
     let gameOver = false;
     let jumps = 0;
 
     document.addEventListener("keydown", (e) => {
-        if (e.code === "ArrowUp" && horse.y === 130) horse.vy = -20; // saut
-    });
-    
-    
+    if (e.code === "ArrowUp" && horse.y === 130) {
+        horse.vy = -20; // saut
+    }
+});
 
     function update() {
         if(gameOver) return;
