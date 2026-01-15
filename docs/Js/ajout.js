@@ -1,75 +1,95 @@
-let son = document.getElementById('son');
-let cheval = document.getElementById('cheval');
+const son = document.getElementById("son");
+const cheval = document.getElementById("cheval");
+const couleurContainer = document.getElementById("couleur-container");
+const btnLogin = document.getElementById("login-btn");
+const modalLogin = document.getElementById("modal-login");
+const formLogin = document.getElementById("formulaire_login");
+let selectedRace = null;   // déjà présent
+let selectedColor = null;  // 🔹 nouvelle variable pour stocker la couleur
+// Mapping race → id base de données
+const raceMap = {
+  camargue: 1,
+  pur_sang_anglais: 2,
+  selle_francais: 3,
+  fjord: 4,
+  trotteur_francais: 5,
+  welsh: 6,
+  akhal_teke: 7
+};
 
-cheval.addEventListener('click', () => son.play());
+// Son au clic sur le cheval
+cheval.addEventListener("click", () => son.play());
 
-//on cree un tableau pour chaque race et son image
-const races = [
-  { id: 'sellefrancais', classImg: 'img_sellefrancais' },
-  { id: 'paint_horse', classImg: 'img_PaintHorse' },
-  { id: 'pottock', classImg: 'img_pottock' },
-  { id: 'pur_sang', classImg: 'img_pur_sang' },
-  { id: 'shetland', classImg: 'img_shetland' },
-  { id: 'marawi', classImg: 'img_marawi' },
-  { id: 'akhal', classImg: 'img_akhal' }
-];
+// =======================
+// Charger les couleurs
+// =======================
+const colorsList = document.getElementById("colorsList");
 
-// 2️⃣ Boucle sur chaque race pour ajouter un event click
-races.forEach(race => {
-  let h2 = document.getElementById(race.id);
+async function loadColors(raceKey) {
+  const raceId = raceMap[raceKey];
+  if (!raceId) return;
 
-  h2.addEventListener('click', () => {
-    son.play();
+  try {
+    const response = await fetch(`/api/couleurs?race_id=${raceId}`);
+    const colors = await response.json();
 
-    //on mettre tous en hidden(pas visible)
-    races.forEach(r => {
-      const images = document.getElementsByClassName(r.classImg);
-      for (let img of images) {
-        img.style.visibility = 'hidden';
+    // ❌ couleurContainer.innerHTML = "";
+    // ✅ seulement les couleurs
+    colorsList.innerHTML = "";
+
+    const MAX = 7;
+
+    for (let i = 0; i < MAX; i++) {
+      const circle = document.createElement("div");
+      circle.classList.add("color-circle", `color-${i + 1}`);
+
+      if (colors[i]) {
+        const color = colors[i];
+        const img = document.createElement("img");
+        img.src = color.preview_image;
+        img.alt = color.nom;
+        circle.appendChild(img);
+
+        circle.addEventListener("click", async () => {
+          try {
+            const res = await fetch(
+              `/api/cheval/${raceKey}?couleur=${encodeURIComponent(color.nom)}`
+            );
+            const couches = await res.json();
+            if (!couches.length) return;
+
+            const bgImages = couches
+              .sort((a, b) => a.layer_order - b.layer_order)
+              .map(c => `url('${c.image_path}')`)
+              .join(", ");
+
+            cheval.style.backgroundImage = bgImages;
+
+            // highlight
+            document.querySelectorAll(".color-circle").forEach(c =>
+              c.classList.remove("active")
+            );
+            circle.classList.add("active");
+
+            // ✅ activer le bouton personnaliser
+            customBtn.disabled = false;
+            selectedColor = color.nom;
+
+          } catch (e) {
+            console.error(e);
+          }
+        });
       }
-    });
-    // Afficher uniquement les images de la race clique
-    const imagesToShow = document.getElementsByClassName(race.classImg);
-    for (let img of imagesToShow) {
-      img.style.visibility = 'visible';
-      img.style.animation = 'slidein 1s ease-out forwards';
-    }
-  });
-});
 
-// changement de cheval on clique sur les cercles des couleurs
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('img_sellefrancais')) {
-    if (e.target.id === 'sellefrancais1') 
-    {
-      cheval.src = "Img/sellefrancais/Rn-grand.webp";
+      colorsList.appendChild(circle);
     }
-    if (e.target.id === 'sellefrancais2') 
-    {
-      cheval.src = "Img/sellefrancais/SF_GS_NV.webp";
-    }
+
+  } catch (err) {
+    console.error("Erreur chargement couleurs :", err);
   }
+}
 
-  if (e.target.classList.contains('img_PaintHorse')) {
-    if (e.target.id === 'PaintHorse1') 
-    {cheval.src = "Img/PaintHorse/PH_Nouveau_BB_Pie_O_Alezan.webp";}
-    if (e.target.id === 'PaintHorse2') 
-      {cheval.src = "Img/PaintHorse/PH_Nouveau_Pie_overo_noir.webp";}
-    if (e.target.id === 'PaintHorse3') 
-      {cheval.src = "Img/PaintHorse/Pie-tb-alz-grand.webp";}
-  }
-
-  if (e.target.classList.contains('img_pottock')) {
-  if (e.target.id === 'pottock1') 
-  {cheval.src = "Img/Pottock/Bai-b-grand.webp";}
-  if (e.target.id === 'pottock2') 
-    {cheval.src = "Img/Pottock/Pottok.webp";}
-  if (e.target.id === 'pottock3') 
-    {cheval.src = "Img/Pottock/Pottock.webp";}
-}});
-
-
-
+/////////////////////////////////////////////////////////////////////
 const modal = document.getElementById("modal");
 const btn = document.getElementById("valider-btn");
 const closeBtn = document.getElementById("close_btn");
@@ -91,47 +111,83 @@ modal.addEventListener("click", (e) => {
   }
 });
 
-
 const form = document.getElementById("formulaire_cheval");
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const nom = document.getElementById("nom").value;
-  const prenom = document.getElementById("prenom").value;
+  const nom = document.getElementById("nom").value.trim();
+  const prenom = document.getElementById("prenom").value.trim();
   const date_naissance = document.getElementById("date_naissance").value;
-  const sexe = document.querySelector('input[name="sexe"]:checked').value;
-  
-  // --- NOUVEAU : Récupérer le chemin de l'image affichée ---
-  // On récupère juste la fin du chemin (ex: Img/Pottock/Pottok.webp)
- const imageComplet = document.getElementById("cheval").getAttribute("src");
+  const sexe = document.querySelector('input[name="sexe"]:checked')?.value;
 
- // Sécurité : si le chemin commence par "/", on l'enlève pour correspondre à la BDD
-if (imageComplet.startsWith("/")) {
-    imageComplet = imageComplet.substring(1);
-}
+  // Vérifier si le cheval est personnalisé
+  const isCustomHorse = selectedLayers.body && selectedLayers.mane && selectedLayers.tail && selectedLayers.forelock;
+
+  // Validation du formulaire
+  if (!nom || !prenom || !date_naissance || !sexe || !selectedRace || (!selectedColor && !isCustomHorse)) {
+    alert("Veuillez remplir tous les champs et choisir race et couleur ou personnaliser le cheval.");
+    return;
+  }
+
+  // Récupérer l'image du cheval si non personnalisé
+  let imageComplet = null;
+  const chevalEl = document.getElementById("cheval");
+  if (!isCustomHorse && chevalEl) {
+    if (chevalEl?.tagName === "IMG") {
+      imageComplet = chevalEl.getAttribute("src");
+    } else {
+      const bg = window.getComputedStyle(chevalEl).backgroundImage;
+      const match = bg?.match(/url\(["']?(.*?)["']?\)/);
+      if (match) imageComplet = match[1];
+    }
+
+    if (!imageComplet) {
+      alert("Veuillez sélectionner un cheval.");
+      return;
+    }
+
+    if (imageComplet.startsWith("/")) {
+      imageComplet = imageComplet.substring(1);
+    }
+  }
+
+  // Préparer le payload à envoyer
+  const formData = {
+    nom,
+    prenom,
+    date_naissance,
+    sexe,
+    race: selectedRace,
+    couleur: isCustomHorse ? null : selectedColor,
+    chevalImages: isCustomHorse ? selectedLayers : null
+  };
 
   try {
     const response = await fetch("/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        nom,
-        prenom,
-        date_naissance,
-        sexe,
-        image_cheval: imageComplet // On envoie le chemin au serveur
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
     });
 
-    const result = await response.text();
-    if (result === "Inscription réussie") {
-        window.location.href = "/main_page"; // Redirige vers la nouvelle page
+    // Tenter de parser le JSON même si status != 200
+    const data = await response.json().catch(() => null);
+
+    if (response.ok && data?.success) {
+        // Cheval normal ou personnalisé enregistré avec succès
+        if (data.chevalImage) {
+            localStorage.setItem("chevalImage", data.chevalImage);
+        }
+        window.location.href = "/main_page";
     } else {
-        alert(result);
+        // Affiche le message d'erreur provenant du serveur
+        const msg = data?.message || `Erreur inscription : ${response.status} ${response.statusText}`;
+        alert(msg);
     }
-  } catch (error) {
-    console.error("❌ Erreur :", error);
-  }
+} catch (err) {
+    console.error("❌ Erreur réseau ou JSON invalide :", err);
+    alert("Erreur serveur, réessayez plus tard");
+}
+
 });
 
 
@@ -143,7 +199,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (data.loggedIn) {
                 statusDiv.innerHTML = `
                     <span>Bienvenue, <strong>${data.user.nom}</strong> !</span>
-                    <a href="/logout" style="color: #ff4d4d; margin-left: 10px;">Déconnexion</a>
                 `;
                 // Optionnel : masquer le bouton "Valider choix" si déjà connecté
                 document.getElementById("valider-btn").style.display = "none";
@@ -154,10 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 // Éléments pour la modale Login
-const modalLogin = document.getElementById("modal-login");
-const btnLogin = document.getElementById("login-btn");
 const closeLoginBtn = document.getElementById("close_login_btn");
-const formLogin = document.getElementById("formulaire_login");
 
 // Ouvrir la modale login
 btnLogin.addEventListener("click", () => {
@@ -196,12 +248,346 @@ formLogin.addEventListener("submit", async (e) => {
     } catch (error) {
         console.error("Erreur réseau :", error);
     }
+});//////////////////////////
+// =======================
+// Clic sur une race
+// =======================
+/*document.querySelectorAll("#races h2").forEach(h2 => {
+  h2.addEventListener("click", () => {
+    son.play();
+    loadColors(h2.id);
+  });
+});*/
+document.querySelectorAll("#races h2").forEach(h2 => {
+  h2.addEventListener("click", () => {
+    son.play();
+
+    selectedRace = h2.id; // ✅ LA LIGNE CLÉ
+    console.log("Race sélectionnée :", selectedRace);
+
+    loadColors(h2.id);
+
+    customBtn.disabled = false;
+
+  resetSelectedLayers();
+  });
 });
-/* For later UPDATE
-UPDATE users 
-SET chevaux = CONCAT(chevaux, '-', 'ID_NOUVEAU_CHEVAL') 
-WHERE nom = 'Jean' AND chevaux IS NOT NULL;
-// Comment transformer la colonne "chevaux" en tableau propre
-const listeChevaux = user.chevaux ? user.chevaux.split('-') : [];
-// Résultat si "1" -> ["1"]
-// Résultat si "1-5-8" -> ["1", "5", "8"]*/
+
+// =======================
+// SESSION USER
+// =======================
+document.addEventListener("DOMContentLoaded", () => {
+  fetch("/api/user")
+    .then(res => res.json())
+    .then(data => {
+      if (data.loggedIn) {
+        document.getElementById("user-status").innerHTML = `
+          <span>Bienvenue, <strong>${data.user.nom}</strong></span>
+          <a href="/logout" style="color:red;margin-left:10px">Déconnexion</a>
+        `;
+        document.getElementById("valider-btn").style.display = "none";
+      }
+    });
+});
+
+
+
+
+//gestion de dialogue 
+
+document.addEventListener("DOMContentLoaded", () => {
+  const person = document.getElementById("personImg");
+  const bubble = document.getElementById("speechBubble");
+  const bubbleText = document.getElementById("bubbleText");
+  const nextBtn = document.getElementById("nextBtn");
+  const bubbleContainer = document.getElementById("bubbleContainer");
+
+  const overlay = document.getElementById("overlay");
+
+const dialogues = [
+  "Bienvenue à l’Écurie Tagada \n Ton aventure commence ici.",
+  "Explore les races, choisis ton cheval, puis crée ton compte pour continuer."
+];
+
+  let index = 0;
+
+  setTimeout(() => {
+    overlay.style.opacity = 1;   // active le flou
+    person.style.opacity = 1;
+    bubble.style.display = "block";
+    bubble.style.opacity = 1;
+    bubbleText.textContent = dialogues[index];
+  }, 5000);
+
+  nextBtn.addEventListener("click", () => {
+    index++;
+    if (index < dialogues.length) {
+      bubbleText.textContent = dialogues[index];
+    } else {
+      // tout cacher après dernier message
+    bubbleContainer.remove(); // 🔥 supprimé
+    overlay.style.opacity = 0;  // désactive le flou
+
+    // APRÈS la transition → libérer les clics
+    setTimeout(() => {
+      bubbleContainer.classList.add("hidden");
+    }, 500);
+
+    }
+  });
+});
+
+
+
+
+
+
+
+// ===============================
+// ÉTAT DES COUCHES SÉLECTIONNÉES
+// ===============================
+const selectedLayers = {
+  forelock: null,
+  mane: null,
+  tail: null,
+  body: null,
+  shadow: "./Img/Nouveau/shadow.png" // shadow toujours présent
+};
+
+// ===============================
+// ÉLÉMENTS DOM
+// ===============================
+const customCheval = document.getElementById("customCheval");
+const customBtn = document.getElementById("customBtn");
+const customModal = document.getElementById("customModal");
+const closeCustomModal = document.getElementById("closeCustomModal");
+const customImagesContainer = document.getElementById("customImages");
+
+// ===============================
+// MISE À JOUR DU CHEVAL (layers)
+// ===============================
+function updateCheval() {
+  const layers = [
+    selectedLayers.forelock,
+    selectedLayers.mane,
+    selectedLayers.tail,
+    selectedLayers.body,
+    selectedLayers.shadow
+  ].filter(Boolean);
+
+  const bg = layers.length ? layers.map(l => `url('${l}')`).join(", ") : "none";
+
+  // Mettre à jour le cheval principal et l'aperçu dans la modale
+  cheval.style.backgroundImage = bg;
+  customCheval.style.backgroundImage = bg;
+}
+
+// ===============================
+// RESET DES COUCHES
+// ===============================
+function resetSelectedLayers() {
+  selectedLayers.forelock = null;
+  selectedLayers.mane = null;
+  selectedLayers.tail = null;
+  selectedLayers.body = null;
+  // shadow reste toujours présent
+
+  // Réinitialiser visuellement l'aperçu
+  customCheval.style.backgroundImage = "none";
+}
+
+// ===============================
+// OUVERTURE MODALE PERSONNALISATION
+// ===============================
+let isCustomHorse = false;
+
+
+const defaultStats = {
+    endurance: 50,
+    vitesse: 50,
+    dressage: 50,
+    galop: 50,
+    trot: 50,
+    saut: 50
+};
+
+
+
+const validateCustomHorseBtn = document.getElementById("validateCustomHorse");
+validateCustomHorseBtn.addEventListener("click", () => {
+  const couleur = document.getElementById('couleur_cheval').value.trim();
+
+  const errorMsg = document.getElementById("modalErrorMsg");
+
+  if (
+    !selectedLayers.body ||
+    !selectedLayers.mane ||
+    !selectedLayers.tail ||
+    !selectedLayers.forelock
+  ) {
+    errorMsg.textContent = "Tu dois sélectionner body, mane, tail et forelock.";
+    errorMsg.style.display = "block";
+    return;
+  }
+if (!couleur) {
+    alert("Veuillez entrer une couleur pour votre cheval.");
+    return;
+}
+  selectedColor = couleur;
+
+  isCustomHorse = true; // <-- cheval personnalisé validé
+  errorMsg.style.display = "none";
+  customModal.style.display = "none";
+    console.log("Couleur cheval personnalisé :", selectedColor);
+
+});
+
+
+customBtn.addEventListener("click", async () => {
+  if (!selectedRace) {
+    alert("Choisis d'abord une race");
+    return;
+  }
+
+  // Reset avant ouverture
+  resetSelectedLayers();
+  customImagesContainer.innerHTML = "";
+
+  // Créer le message d'erreur si pas déjà présent
+  let errorMsg = document.getElementById("modalErrorMsg");
+  if (!errorMsg) {
+    errorMsg = document.createElement("p");
+    errorMsg.id = "modalErrorMsg";
+    errorMsg.style.color = "red";
+    errorMsg.style.marginTop = "10px";
+    errorMsg.style.display = "none";
+    customModal.querySelector(".box_formulaire_style").appendChild(errorMsg);
+  }
+
+  // Ouvrir modale
+  customModal.style.display = "flex";
+
+  try {
+    const res = await fetch(`/api/chevaux_personnalisation?race=${selectedRace}`);
+    const images = await res.json();
+
+    images.forEach(imgData => {
+      const img = document.createElement("img");
+      img.src = imgData.image_path;
+      img.alt = imgData.couche;
+      img.style.width = "100px";
+      img.style.margin = "6px";
+      img.style.cursor = "pointer";
+
+      img.addEventListener("click", () => {
+        selectedLayers[imgData.couche] = imgData.image_path;
+        updateCheval();
+
+        // Si toutes les couches obligatoires sont choisies, cacher le message
+        if (selectedLayers.body && selectedLayers.mane && selectedLayers.tail && selectedLayers.forelock) {
+          errorMsg.style.display = "none";
+        }
+      });
+
+      customImagesContainer.appendChild(img);
+    });
+
+  } catch (err) {
+    console.error(err);
+    alert("Erreur lors du chargement des images");
+  }
+});
+
+// ===============================
+// FERMETURE MODALE
+// ===============================
+
+
+
+closeCustomModal.addEventListener("click", () => {
+  // ❌ annulation → on reset
+  resetSelectedLayers();
+  customModal.style.display = "none";
+});
+////////////////////////////////
+const formInscription = document.getElementById('formulaire_cheval');
+
+if (formInscription) {
+    formInscription.addEventListener('submit', async (e) => {
+        e.preventDefault(); // bloque l'envoi classique
+
+        // Récupérer les valeurs du formulaire
+        const nom = document.getElementById('nom').value.trim();
+        const prenom = document.getElementById('prenom').value.trim();
+        const date_naissance = document.getElementById('date_naissance').value;
+        const sexe = document.querySelector('input[name="sexe"]:checked')?.value || '';
+        const race = selectedRace;
+        const couleur = selectedColor;
+
+        const isCustomHorse = selectedLayers.body && selectedLayers.mane && selectedLayers.tail && selectedLayers.forelock;
+
+    if (!nom || !prenom || !date_naissance || !sexe || !race || (!couleur && !isCustomHorse)) {
+    alert("Veuillez remplir tous les champs et choisir race et couleur ou personnaliser le cheval.");
+    return;
+}
+
+        // Déterminer si c'est un cheval personnalisé
+
+        // Préparer le payload à envoyer
+        const formData = {
+    nom,
+    prenom,
+    date_naissance,
+    sexe,
+    race,
+    couleur: selectedColor,
+    chevalImages: isCustomHorse ? selectedLayers : null
+};
+
+        try {
+            const response = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                // Optionnel : stocker l'image du cheval personnalisé pour usage local
+                if (data.chevalImage) {
+                    localStorage.setItem('chevalImage', data.chevalImage);
+                }
+
+                // Redirection vers la page principale
+                window.location.href = '/main_page';
+            } else {
+                alert("Erreur inscription : " + (data.message || "Veuillez réessayer"));
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Erreur serveur, réessayez plus tard");
+        }
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

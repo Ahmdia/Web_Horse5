@@ -1,32 +1,87 @@
 let horseStats = { energie: 0, sante: 0, moral: 0 };
 let userCoins = 0; // On le garde pour la vérification locale
 let currentHorseId = null;
+let horseSkills = null;
+
+
+
+
+
+
+
+
+
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Charger le cheval
+    const savedStats = sessionStorage.getItem("horseStats");
+const savedSkills = sessionStorage.getItem("horseSkills");
+
+if (savedStats) {
+    horseStats = JSON.parse(savedStats);
+    updateVisualBars();
+    sessionStorage.removeItem("horseStats");
+}
+
+if (savedSkills) {
+    horseSkills = JSON.parse(savedSkills);
+
+    const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
+    aptitudes.forEach(apt => {
+        if (horseSkills[apt] !== undefined) {
+            afficherEtoiles(`star-${apt}`, Math.round(horseSkills[apt] / 10));
+        }
+    });
+
+    sessionStorage.removeItem("horseSkills");
+}
+
+
+
+
+
     fetch("/api/user-first-horse")
         .then(res => res.json())
         .then(data => {
-            if (data.found) {
-                const horse = data.horse;
-                currentHorseId = horse.id;
-                document.getElementById("user-horse-img").src = horse.chemin_image;
-                document.getElementById("user-horse-img").style.display = "block";
-                document.getElementById("user-horse-name").innerText = horse.nom_personnalise || horse.nom;
+            if (!data.found) return;
 
-                
-                initStats(horse); 
-                const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
-                aptitudes.forEach(apt => {
-                    afficherEtoiles(`star-${apt}`, Math.round(horse[apt] / 10));
-                });
+            const horse = data.horse;
+            currentHorseId = horse.id;
 
-                setupActionButtons();
-                setInterval(baisserStatsAutomatiquement, 300000);
-            }
+            const container = document.getElementById("customCheval");
+            container.innerHTML = "";
+            const sortedImages = [...horse.images].sort(
+                (a, b) => b.order - a.order
+            );
+            let baseZ = 10;
+
+            sortedImages.forEach(layer => {
+                const img = document.createElement("img");
+                img.src = layer.src;
+                img.alt = layer.couche;
+                img.classList.add("horse-layer");
+                if (layer.couche === "shadow") {
+                    img.style.zIndex = 1;
+                } else {
+                    img.style.zIndex = baseZ++;
+                }
+                container.appendChild(img);
+            });
+
+            // 📝 Nom
+            document.getElementById("user-horse-name").innerText =
+                horse.nom_personnalise || horse.race;
+
+            // ⭐ Stats
+            initStats(horse);
+            const aptitudes = ['vitesse', 'endurance', 'dressage', 'galop', 'trot', 'saut'];
+            aptitudes.forEach(apt => {
+                afficherEtoiles(`star-${apt}`, Math.round(horse[apt] / 10));
+            });
+
+            setupActionButtons();
+            setInterval(baisserStatsAutomatiquement, 300000);
         });
 
-    // 2. Récupérer juste l'argent pour la logique des boutons
     fetch("/api/user")
         .then(res => res.json())
         .then(data => {
@@ -36,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const displayGroup = document.getElementById("name-display-group");
@@ -102,12 +158,22 @@ function sauvegarderStatsBDD() {
     });
 }
 
-function sauvegarderArgentBDD() {
-    fetch("/api/update-money", {
+async function sauvegarderArgentBDD() {
+    await fetch("/api/update-money", { // Notez le "await" ici
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({ montant: userCoins })
     });
+    // Une fois la sauvegarde terminée, on met à jour le visuel
+    if (typeof updateHeader === "function") updateHeader();
+}
+
+function updateVisualBars() {
+    for (let s in horseStats) {
+        if (horseStats[s] > 100) horseStats[s] = 100;
+        if (horseStats[s] < 0) horseStats[s] = 0;
+        document.getElementById(`bar-${s}`).style.width = horseStats[s] + "%";
+    }
 }
 
 function setupActionButtons() {
@@ -128,7 +194,7 @@ function setupActionButtons() {
 
             userCoins -= cout;
             // On met à jour le header via la fonction globale
-            if (typeof updateHeader === "function") updateHeader(); 
+            //if (typeof updateHeader === "function") updateHeader(); 
 
             if (type === "Carotte") horseStats.energie += 15;
             else if (type === "Foin") horseStats.energie += 5;
@@ -144,13 +210,7 @@ function setupActionButtons() {
     });
 }
 
-function updateVisualBars() {
-    for (let s in horseStats) {
-        if (horseStats[s] > 100) horseStats[s] = 100;
-        if (horseStats[s] < 0) horseStats[s] = 0;
-        document.getElementById(`bar-${s}`).style.width = horseStats[s] + "%";
-    }
-}
+
 
 function baisserStatsAutomatiquement() {
     horseStats.energie -= 5;
@@ -188,26 +248,3 @@ function modifierNomCheval(nouveauNom) {
         }
     });
 }
-/*
-function remplirJaugesAleatoires() {
-    ['energie', 'sante', 'moral'].forEach(stat => {
-        const val = Math.floor(Math.random() * 70) + 30;
-        document.getElementById(`bar-${stat}`).style.width = val + "%";
-    });
-}
-
-// 2. Gestion du menu déroulant Profil
-const profileTrigger = document.getElementById("profile-trigger");
-const dropdown = document.getElementById("user-dropdown");
-
-profileTrigger.addEventListener("click", (e) => {
-    e.stopPropagation();
-    dropdown.classList.toggle("show");
-});
-
-// Fermer le menu si on clique ailleurs
-window.addEventListener("click", () => {
-    dropdown.classList.remove("show");
-});
-
-*/

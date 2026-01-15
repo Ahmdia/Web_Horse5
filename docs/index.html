@@ -6,62 +6,77 @@
     <link rel="icon" type="image/png" href="Img/jumping-horse-silhouette-facing-left-side-view.png"> 
     <link rel="stylesheet" href="Css/style.css">
     <link rel="stylesheet" href="Css/formulaire.css">
- 
   </head>
 
-  
+
+    
+
   <body>
+    
     <div id="main-container">
-       <div id="user-status" style="text-align: right; padding: 10px; color: white;">
-        </div>
-        <img src="Img/stable.png"  id="stable">
-        <div id="races">
-          <h1>Races</h1>
-          <h2 id="sellefrancais">Selle Français </h2>
-          <h2 id="paint_horse">Paint Horse </h2>
-          <h2 id="pottock">Pottock </h2>
-          <h2 id="pur_sang">Pur sang </h2>
-          <h2 id="shetland">Shetland The last </h2>
-          <h2 id="marawi">Marwari</h2>
-          <h2 id="akhal">Akhal-Téké</h2>
-        </div>
-    
-        <div id="box_cheval">
-            <div id="fairy-container"></div>
-          <img src="Img/Alz-b-grand.webp"  id="cheval">
-        </div>
-            <audio  id="son">
-              <source src="Sound/horse-neigh-261131.mp3" type="audio/mpeg" />
-           </audio>
-           <button id="valider-btn">Créer un compte</button>
-            <button id="login-btn">Se connecter</button> 
+        <div id="overlay"></div>
 
-          </div>
+    <!-- Bulle centrée -->
+    <!-- Conteneur fixe pour la personne et la bulle -->
+    <div class="bubble-container" id="bubbleContainer">
+      <!-- Personne -->
+      <img src="Img/Decor/personnes.png" alt="Personne" class="person-img" id="personImg">
 
-          
-        <div class="couleur">
-          <img src="Img/sellefrancais/sellefrancais1.png"    id="sellefrancais1" class="img_sellefrancais">
-          <img src="Img/sellefrancais/sellefrancais2.png"  id="sellefrancais2" class="img_sellefrancais">
-          
-          <img src="Img/PaintHorse/PH_Nouveau_BB_Pie_O_Alezan.png"    id="PaintHorse1" class="img_PaintHorse">
-          <img src="Img/PaintHorse/PH_Nouveau_Pie_overo_noir.png"    id="PaintHorse2" class="img_PaintHorse">
-          <img src="Img/PaintHorse/Pie-tb-alz-grand.png"    id="PaintHorse3" class="img_PaintHorse">
-    
-          <img src="Img/Pottock/Bai-b-grand.png"    id="pottock1" class="img_pottock">
-          <img src="Img/Pottock/Pottok.png"    id="pottock2" class="img_pottock">
-          <img src="Img/Pottock/Pottock.png"    id="pottock3" class="img_pottock">
-        </div>
-    
-        <audio autoplay id="son">
-          <source src="Sound/horse-neigh-261131.mp3" type="audio/mpeg" />
-        </audio>
-       <audio  id="son_baguette_magique">
-          <source src="Sound/charming-twinkle-sound-for-fantasy-and-magic-250240.mp3" type="audio/mpeg" />
-        </audio>
+      <!-- Bulle centrée verticalement par rapport à la personne -->
+      <div class="speech-bubble" id="speechBubble">
+        <p id="bubbleText"></p>
+        <button id="nextBtn">Suivant</button>
+      </div>
+    </div>
 
-       
+      <!-- Statut utilisateur -->
+      <div id="user-status" style="text-align: right; padding: 10px; color: white;"></div>
+      <div id="choix-zone">
+
+      <!-- Liste des races -->
+      <div id="races">
+        <h1>Races</h1>
+        <h2 id="camargue">Camargue</h2>
+        <h2 id="pur_sang_anglais">Pur-Sang Anglais</h2>
+        <h2 id="selle_francais">Selle Français</h2>
+        <h2 id="fjord">Fjord</h2>
+        <h2 id="trotteur_francais">Trotteur Français</h2>
+        <h2 id="welsh">Welsh</h2>
+        <h2 id="akhal_teke">Akhal-Téké</h2>
+      </div>
+
+      <!-- Box cheval -->
+      <div id="box_cheval">
+        <div id="fairy-container"></div>
+        <figure id="cheval" style="background-image: url('./Img/Nouveau/gr-c.png'), url('./Img/Nouveau/gr-c1.png'), url('./Img/Nouveau/gr-c2.png'), url('./Img/Nouveau/gr-c3.png'), url('./Img/Nouveau/shadow.png');"></figure>
+
+      </div>
+
+      <!-- Son du cheval -->
+      <audio id="son">
+        <source src="Sound/horse-neigh-261131.mp3" type="audio/mpeg" />
+      </audio>
+      <audio id="son_baguette_magique">
+        <source src="Sound/charming-twinkle-sound-for-fantasy-and-magic-250240.mp3" type="audio/mpeg" />
+      </audio>
+
+<div id="horse-buttons">
+  <button id="valider-btn">Créer un compte</button>
+  <button id="login-btn">Se connecter</button>
+</div>
+ <!-- <button id="login-btn">Se connecter</button>-->
+
+      <!-- Conteneur des couleurs dynamiques -->
+      <div class="couleur" id="couleur-container">
+  <div id="colorsList"></div>
+
+  <!-- bouton fixe -->
+  <button id="customBtn" class="btn-custom" disabled>Personnaliser</button>
 
 
+
+      </div>
+    </div>
       <!-- MODALE FORMULAIRE -->
       <div id="modal">
         <div id="box_formulaire">
@@ -76,8 +91,10 @@
             </div>
 
             <div class="data">
-              <label for="prenom">Nom de cheval :</label>
-              <input type="text" id="prenom" name="prenom" required>
+              <label for="prenom">Mot de passe :</label>
+
+              <input type="password" id="prenom" name="prenom" required>
+
             </div>
 
             <div class="data">
@@ -110,7 +127,7 @@
               </div>
 
               <div class="data">
-                <label for="login_prenom">Nom de cheval (Mot de passe) :</label>
+                <label for="login_prenom">Mot de passe:</label>
                 <input type="password" id="login_prenom" name="prenom" required>
               </div>
 
@@ -119,34 +136,56 @@
           </div>
         </div>
 
-        
-        <script src="Js/ajout.js" defer></script>
-        <script src="Js/secondPage.js" defer></script></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
-              <script>
+      <!-- Scripts -->
+      <script src="Js/ajout.js" defer></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.10.2/lottie.min.js"></script>
+      <script>
         const fairy = lottie.loadAnimation({
-          container: document.getElementById('fairy-container'), // div où apparaît la fée
-          renderer: 'svg',       // SVG pour que ce soit responsive
-          loop: false,           // joue une seule fois
-          autoplay: true,        // lance automatiquement
-          path: 'Json/baguette_magique.json' // chemin vers ton fichier JSON
+          container: document.getElementById('fairy-container'),
+          renderer: 'svg',
+          loop: false,
+          autoplay: true,
+          path: 'Json/baguette_magique.json'
         });
-        // Quand l'animation est terminée, faire apparaître le cheval
-          fairy.addEventListener('complete', () => {
-            const cheval = document.getElementById('cheval');
-            const fairyContainer = document.getElementById('fairy-container');
-            //const son_baguette_magique = document.getElementById('son_baguette_magique');
-            //son_baguette_magique.play();
-            // Faire apparaître le cheval progressivement
-            cheval.style.opacity = 1;
-    
-            // Faire disparaître la fée progressivement
-            fairyContainer.style.opacity = 0;
-            setTimeout(() => {
-              fairyContainer.style.display = 'none';
-            }, 1000); // correspond à la durée de la transition CSS
-          });
-        </script>
+
+        fairy.addEventListener('complete', () => {
+          const cheval = document.getElementById('cheval');
+          const fairyContainer = document.getElementById('fairy-container');
+          cheval.style.opacity = 1;
+          fairyContainer.style.opacity = 0;
+          setTimeout(() => {
+            fairyContainer.style.display = 'none';
+          }, 1000);
+        });
+      </script>
     </div>
+<div id="customModal" class="modal-style">
+  <div class="box_formulaire_style custom-layout">
+
+    <span id="closeCustomModal" class="close_btn">&times;</span>
+    <h2>Personnaliser mon cheval</h2>
+
+    <div class="custom-content">
+
+      <!-- PREVIEW CHEVAL -->
+      <div class="custom-preview">
+        <figure id="customCheval"></figure>
+      </div>
+
+      <!-- LISTE DES IMAGES -->
+      <div id="customImages" class="custom-images-container"></div>
+             
+    </div><label for="couleur_cheval">couleur de cheval :</label>
+                <input type="text" id="couleur_cheval" name="couleur_cheval" required>
+      <button id="validateCustomHorse" class="btn-custom-validate">
+    Valider mon cheval
+  </button>
+
+  </div>
+</div>
+
+
+  </div>
+</div>
   </body>
 </html>

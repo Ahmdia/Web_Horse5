@@ -1,0 +1,94 @@
+body.competition-body {
+    display: block !important;
+    overflow-y: auto;
+    padding-top: 200px;
+    background: #f3f3f3;
+    font-family: Arial, sans-serif;
+}
+
+#competitions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    max-width: 900px;
+    margin: 2rem auto;
+}
+
+.competition-card {
+    background: #f3e5ab;
+    border-radius: 15px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    
+}
+
+.competition-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+.card-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.card-desc {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+.play-btn {
+    background-color: #4e342e;
+    color: #f3e5ab;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.play-btn:hover {
+    background-color: #d4af37;
+    color: #3e2723;
+}
+
+#mini-game {
+    max-width: 650px;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+#game-instructions {
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+
+
+#game-canvas {
+    border: 1px solid #000;
+    background-image: url("../Img/mini_jeu/fond_mini3.jpg");
+    background-size: cover;      
+    background-position: center;
+    background-repeat: no-repeat;
+}
+p {
+    text-align: center;
+    margin-bottom: 30px;
+     font-size: 1.3rem;
+
+    color: #cac387;
+}
+h2 {
+        text-align: center;
+    margin-top: 75px;
+    font-family: 'Rye', cursive;
+    font-size: 2.5rem;
+    color: #ffd651;
+    margin-bottom: 30px;
+}

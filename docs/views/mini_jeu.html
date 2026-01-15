@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block body_class %}mini-jeu-body{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="Css/mini_jeu.css">
+{% endblock %}
+
+{% block content %}
+<main id="competition-container">
+    <h2>Sélectionne une compétition</h2>
+
+    <div class="competition-grid">
+        <div class="competition-card" data-discipline="cso" data-reward="50" data-penalty="5">
+            <div class="card-title">CSO</div>
+            <div class="card-desc">Gains : 50 💰, Perte : 5 pts santé</div>
+        </div>
+
+        <div class="competition-card" data-discipline="dressage" data-reward="30" data-penalty="3">
+            <div class="card-title">Dressage</div>
+            <div class="card-desc">Gains : 30 💰, Perte : 3 pts santé</div>
+        </div>
+    </div>
+
+    <div id="game-area" style="display:none; text-align:center;">
+        <canvas id="game-canvas" width="800" height="200" ></canvas>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script src="Js/mini_jeu.js"></script>
+{% endblock %}
+
+
+
+
+

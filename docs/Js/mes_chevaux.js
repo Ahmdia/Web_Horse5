@@ -11,9 +11,18 @@ function loadMyHorses() {
                 const card = document.createElement("div");
                 card.className = `item-card ${horse.actif ? 'active-card' : ''}`;
                 
+                // Génération du HTML pour les calques d'images
+                let imagesHTML = '<div class="horse-preview-container">';
+                    horse.images
+                         .sort((a, b) => b.order - a.order)
+                         .forEach(img => {
+                             imagesHTML += `<img src="${img.src}" class="horse-layer horse-${img.couche}">`;
+                         });
+                    imagesHTML += '</div>';
+
                 card.innerHTML = `
-                    ${horse.actif ? '<div class="status-badge">⭐ Actif</div>' : ''}
-                    <img src="${horse.chemin_image}" alt="Cheval" class="item-img">
+                    ${horse.actif ? '<div class="status-badge">⭐ Actuel</div>' : ''}
+                    ${imagesHTML}
                     <div class="item-name">${horse.nom_personnalise || horse.race}</div>
                     <div class="item-mini-stats">
                         <span>⚡ ${horse.vitesse}</span>
